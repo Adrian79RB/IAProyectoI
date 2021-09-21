@@ -97,6 +97,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  parent: {fileID: 6199127110365035078}
   gameEnding: {fileID: 0}
 --- !u!1 &8038108750564668487
 GameObject:

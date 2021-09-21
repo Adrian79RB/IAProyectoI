@@ -5,11 +5,15 @@ using UnityEngine;
 public class GargoilObserver : MonoBehaviour
 {
     public Transform player;
+    public Transform parent;
     public GameEnding gameEnding;
-
+    private Quaternion basePosition;
     bool m_IsPlayerInRange;
 
     //cuando algo entra en su campo de visión comprueba si se trata del jugador
+    void Start(){
+        basePosition = parent.rotation;
+    }
     void OnTriggerEnter (Collider other)
     {
         if (other.transform == player)
@@ -23,6 +27,7 @@ public class GargoilObserver : MonoBehaviour
         if (other.transform == player)
         {
             m_IsPlayerInRange = false;
+            parent.rotation=basePosition;
         }
     }
 
@@ -40,6 +45,7 @@ public class GargoilObserver : MonoBehaviour
             {
                 if (raycastHit.collider.transform == player)
                 {
+                    parent.LookAt(player);
                     //gameEnding.CaughtPlayer ();
                 }
             }
