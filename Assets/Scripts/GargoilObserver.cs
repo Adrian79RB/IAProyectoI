@@ -1,8 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Observer : MonoBehaviour
+public class GargoilObserver : MonoBehaviour
 {
     public Transform player;
     public GameEnding gameEnding;
@@ -46,3 +46,4 @@ public class Observer : MonoBehaviour
         }
     }
 }
+
