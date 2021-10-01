@@ -19,7 +19,6 @@ public class Nodo : MonoBehaviour
         RaycastHit ray;
         for (int i = 0; i < numRayos; i++)
         {
-            //Vector3 origin = new Vector3( transform.position.x - i/2 * bCollider.size.x / 2, transform.position.y, transform.position.z - (i+1)/2 * bCollider.size.z / 2);
             float angle = (Mathf.PI / 4 * i) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.up);
 
