@@ -2,17 +2,67 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class priorityQueue : MonoBehaviour
+public class priorityQueue
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    //esta clase almacena un nodo del grafo en una lista doblemente enlazada con prioridad.
+    public class NodoPQ{
+
+        public Nodo nodo;
+        public NodoPQ anterior, siguiente;
+        public float prioridad;
+    }
+    private NodoPQ raiz;
+
+    public priorityQueue(){
+        raiz = null;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    void Insertar(Nodo nodoNew, float prioridad){
+        NodoPQ nuevo = new NodoPQ();
+        nuevo.nodo = nodoNew;
+        nuevo.prioridad = prioridad;
+        if(raiz == null){
+            raiz = nuevo;
+        }
+        else{
+            if(raiz.prioridad > nuevo.prioridad){
+                NodoPQ auxiliar = raiz;
+                raiz = nuevo;
+                raiz.siguiente = auxiliar;
+            }
+            else{
+                for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){
+                    if(nuevo.prioridad < nodo.prioridad && nodo.anterior.prioridad < nuevo.prioridad){
+                        nodo.anterior.siguiente = nuevo;
+                        nuevo.anterior = nodo.anterior;
+                        nodo.anterior = nuevo;
+                        nuevo.siguiente = nodo;
+
+                    }
+                }
+            }
+        }
     }
+    Nodo Devolver(){
+        if(raiz != null){
+            NodoPQ primero = raiz;
+            raiz = raiz.siguiente;
+            return primero.nodo;
+        }
+        return null;
+    }
+
+    void CambiarPrio(Nodo nodoComp, float nuevaPrio){
+        NodoPQ nodoaux = new NodoPQ();
+        for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){
+            if(nodo.nodo == nodoComp){
+                nodo.anterior.siguiente = nodo.siguiente;
+                nodo.siguiente.anterior = nodo.anterior;
+                Insertar(nodoComp, nuevaPrio);
+                return;
+            }
+        }
+
+    }
+
 }
