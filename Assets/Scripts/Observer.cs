@@ -6,8 +6,14 @@ public class Observer : MonoBehaviour
 {
     public Transform player;
     public GameEnding gameEnding;
-
+    
+    MovimientoFantasmas ghost;
     bool m_IsPlayerInRange;
+
+    private void Start()
+    {
+        ghost = GetComponentInParent<MovimientoFantasmas>();
+    }
 
     //cuando algo entra en su campo de visión comprueba si se trata del jugador
     void OnTriggerEnter (Collider other)
@@ -41,8 +47,13 @@ public class Observer : MonoBehaviour
                 if (raycastHit.collider.transform == player)
                 {
                     //gameEnding.CaughtPlayer ();
+                    ghost.cambiarEstadoFantasma(true);
                 }
             }
+        }
+        else if(ghost.consultaEstadoFantasma())
+        {
+            //ghost.cambiarEstadoFantasma(false);
         }
     }
 }
