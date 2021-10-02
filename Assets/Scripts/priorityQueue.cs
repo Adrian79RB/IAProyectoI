@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class priorityQueue:
+public class priorityQueue
 {
     //esta clase almacena un nodo del grafo en una lista doblemente enlazada con prioridad.
     public class NodoPQ{
@@ -12,13 +12,14 @@ public class priorityQueue:
         public float prioridad;
     }
     private NodoPQ raiz;
-    public priorityQueue{
+
+    public priorityQueue(){
         raiz = null;
     }
 
-    void Insertar(Nodo nodo, float prioridad){
+    void Insertar(Nodo nodoNew, float prioridad){
         NodoPQ nuevo = new NodoPQ();
-        nuevo.nodo = nodo;
+        nuevo.nodo = nodoNew;
         nuevo.prioridad = prioridad;
         if(raiz == null){
             raiz = nuevo;
@@ -30,7 +31,7 @@ public class priorityQueue:
                 raiz.siguiente = auxiliar;
             }
             else{
-                for(NodoPQ nodo = raiz; nodo.siguiente != null; nodo = nodo.siguiente){
+                for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){
                     if(nuevo.prioridad < nodo.prioridad && nodo.anterior.prioridad < nuevo.prioridad){
                         nodo.anterior.siguiente = nuevo;
                         nuevo.anterior = nodo.anterior;
@@ -44,12 +45,24 @@ public class priorityQueue:
     }
     Nodo Devolver(){
         if(raiz != null){
-            Nodo primero = raiz;
+            NodoPQ primero = raiz;
             raiz = raiz.siguiente;
-            return primero;
+            return primero.nodo;
         }
         return null;
-        
+    }
+
+    void CambiarPrio(Nodo nodoComp, float nuevaPrio){
+        NodoPQ nodoaux = new NodoPQ();
+        for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){
+            if(nodo.nodo == nodoComp){
+                nodo.anterior.siguiente = nodo.siguiente;
+                nodo.siguiente.anterior = nodo.anterior;
+                Insertar(nodoComp, nuevaPrio);
+                return;
+            }
+        }
+
     }
 
 }
