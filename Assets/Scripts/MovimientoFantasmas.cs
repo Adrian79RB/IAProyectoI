@@ -8,7 +8,7 @@ public class MovimientoFantasmas : MonoBehaviour
     public bool alertado = false;
     public Transform ultimaPosicionConocidaJugador;
     public float velocidad = 2f;
-    public float velocidadRotacion = 0.01f;
+    public float velocidadRotacion = 0.15f;
     public int waypointObjetivo = 0;
     public float distanciaWaypoint = 0.2f;
     public Transform objetivoActual;
@@ -40,7 +40,7 @@ public class MovimientoFantasmas : MonoBehaviour
         Vector3 direccion = (objetivoActual.transform.position-this.transform.position).normalized;
         Quaternion rotacion = Quaternion.LookRotation(direccion,transform.up);
         this.transform.position = this.transform.position + direccion * velocidad * Time.deltaTime;
-        transform.rotation = Quaternion.Lerp( this.transform.rotation, rotacion, velocidadRotacion * Time.deltaTime);
+        transform.rotation = Quaternion.Lerp( this.transform.rotation, rotacion, velocidadRotacion);
     }
     void ComprobarWaypoint(){
         float dist = Vector3.Distance(objetivoActual.position, this.transform.position);

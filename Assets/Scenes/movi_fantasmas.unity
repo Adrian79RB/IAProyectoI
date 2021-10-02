@@ -287,7 +287,7 @@ PrefabInstance:
     - target: {fileID: 4398672163102086471, guid: 6dccd6ba3874ac14383aa1fc1658e13f,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.52
+      value: -0.63
       objectReference: {fileID: 0}
     - target: {fileID: 4398672163102086471, guid: 6dccd6ba3874ac14383aa1fc1658e13f,
         type: 3}
@@ -1488,10 +1488,11 @@ MonoBehaviour:
   alertado: 0
   ultimaPosicionConocidaJugador: {fileID: 0}
   velocidad: 2
-  velocidadRotacion: 0.01
+  velocidadRotacion: 0.15
   waypointObjetivo: 0
   distanciaWaypoint: 0.2
   objetivoActual: {fileID: 0}
+  homePoint: {fileID: 258775622}
   Waypoints:
   - {fileID: 1997228603}
   - {fileID: 1976579092}

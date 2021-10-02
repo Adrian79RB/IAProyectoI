@@ -24,7 +24,6 @@ public class Nodo : MonoBehaviour
 
             if (Physics.Raycast(transform.position, transform.TransformDirection(new Vector3(0, 0, 1)), out ray, 100.0f) && ray.transform.tag == "Waypoint")
             {
-                Debug.Log("Tag: " + ray.transform.tag + " Position: " + ray.transform.position);
                 arcs.Add(ray.transform.gameObject);
                 weigths.Add(Vector3.Distance(transform.position, ray.transform.position));
             }
