@@ -44,4 +44,25 @@ public class MovimientoFantasmas : MonoBehaviour
             objetivoActual = Waypoints[waypointObjetivo];
         }
     }
+
+    void AvisarCazador(GameObject cazador){
+       // Movimiento(objetivoActual = cazador);
+       cazador.GetComponent<CazadorMovement>().AvisoDeFantasma(ultimaPosicionConocidaJugador);
+    }
+
+    void OnTriggerEnter(Collision col){
+         if (col.gameObject.name == "cazador"){
+             AvisarCazador(col.gameObject);
+         }
+    }
+
+    // funcion del cazador
+    void AvisoDeFantasma(){
+
+    }
+
+    //funcion gargola
+    void AvisarFantasma(){
+
+    }
 }
