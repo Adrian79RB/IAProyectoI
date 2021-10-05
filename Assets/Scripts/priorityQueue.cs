@@ -5,13 +5,16 @@ using UnityEngine;
 public class priorityQueue
 {
     //esta clase almacena un nodo del grafo en una lista doblemente enlazada con prioridad.
+    
     public class NodoPQ{
 
         public Nodo nodo;
         public NodoPQ anterior, siguiente;
         public float prioridad;
+        
     }
     private NodoPQ raiz;
+    private int cantidad;
 
     public priorityQueue(){
         raiz = null;
@@ -23,12 +26,14 @@ public class priorityQueue
         nuevo.prioridad = prioridad;
         if(raiz == null){
             raiz = nuevo;
+            cantidad++;
         }
         else{
             if(raiz.prioridad > nuevo.prioridad){
                 NodoPQ auxiliar = raiz;
                 raiz = nuevo;
                 raiz.siguiente = auxiliar;
+                cantidad++;
             }
             else{
                 for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){
@@ -37,6 +42,7 @@ public class priorityQueue
                         nuevo.anterior = nodo.anterior;
                         nodo.anterior = nuevo;
                         nuevo.siguiente = nodo;
+                        cantidad++;
 
                     }
                 }
@@ -47,6 +53,7 @@ public class priorityQueue
         if(raiz != null){
             NodoPQ primero = raiz;
             raiz = raiz.siguiente;
+            cantidad--;
             return primero.nodo;
         }
         return null;
@@ -63,6 +70,12 @@ public class priorityQueue
             }
         }
 
+    }
+    bool Vacia(){
+        if(cantidad == 0){
+            return true;
+        }
+        return false;
     }
 
 }
