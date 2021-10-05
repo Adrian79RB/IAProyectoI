@@ -12,6 +12,7 @@ public class CazadorMovement : MonoBehaviour
     float rotationTime = 0.1f;
     Transform target = null;
     bool pathFound = false;
+    bool alertado = false;
 
     // Start is called before the first frame update
     void Start()
@@ -23,7 +24,7 @@ public class CazadorMovement : MonoBehaviour
 
     private void Update()
     {
-        if (!pathFound) {
+        if (!pathFound && alertado) {
             float pastDistanceToMe = 0.0f;
             float pastDistanceToPlayer = Vector3.Distance(player.transform.position, transform.position);
 
@@ -68,4 +69,10 @@ public class CazadorMovement : MonoBehaviour
             transform.position += transform.forward * speed * Time.deltaTime;
         }
     }
+
+    public void AvisoDeFantasma(){
+        alertado = true;
+    }
+
+    
 }

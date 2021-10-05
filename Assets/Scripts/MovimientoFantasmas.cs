@@ -109,4 +109,22 @@ public class MovimientoFantasmas : MonoBehaviour
     {
         return alertado;
     }
+
+    void AvisarCazador(GameObject cazador){
+       // Movimiento(objetivoActual = cazador);
+       cazador.GetComponent<CazadorMovement>().AvisoDeFantasma();
+    }
+
+    void OnTriggerEnter(Collider col){
+         if (col.gameObject.tag == "cazador"){
+             AvisarCazador(col.gameObject);
+         }
+    }
+
+    public void AvisoDeGargola(){
+        alertado = true;
+    }
+
+    
+
 }
