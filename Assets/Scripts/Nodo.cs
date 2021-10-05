@@ -7,6 +7,7 @@ public class Nodo : MonoBehaviour
     public List<float> weigths;
     public List<GameObject> arcs;
     
+    [SerializeField] int id;
     int numRayos = 7;
 
     // Start is called before the first frame update
@@ -29,5 +30,10 @@ public class Nodo : MonoBehaviour
             }
         }
 
+    }
+
+    public void setId(int newId)
+    {
+        id = newId;
     }
 }
