@@ -20,7 +20,7 @@ public class priorityQueue
         raiz = null;
     }
 
-    void Insertar(Nodo nodoNew, float prioridad){
+    public void Insertar(Nodo nodoNew, float prioridad){
         NodoPQ nuevo = new NodoPQ();
         nuevo.nodo = nodoNew;
         nuevo.prioridad = prioridad;
@@ -49,7 +49,7 @@ public class priorityQueue
             }
         }
     }
-    Nodo Devolver(){
+    public Nodo Devolver(){
         if(raiz != null){
             NodoPQ primero = raiz;
             raiz = raiz.siguiente;
@@ -59,7 +59,7 @@ public class priorityQueue
         return null;
     }
 
-    void CambiarPrio(Nodo nodoComp, float nuevaPrio){
+    public void CambiarPrio(Nodo nodoComp, float nuevaPrio){
         NodoPQ nodoaux = new NodoPQ();
         for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){
             if(nodo.nodo == nodoComp){
@@ -71,7 +71,7 @@ public class priorityQueue
         }
 
     }
-    bool Vacia(){
+    public bool Vacia(){
         if(cantidad == 0){
             return true;
         }
