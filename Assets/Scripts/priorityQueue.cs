@@ -12,12 +12,14 @@ public class priorityQueue
         public float prioridad;
     }
     private NodoPQ raiz;
+    private int length;
 
     public priorityQueue(){
         raiz = null;
     }
 
-    void Insertar(Nodo nodoNew, float prioridad){
+    public void Insertar(Nodo nodoNew, float prioridad){
+        length++;
         NodoPQ nuevo = new NodoPQ();
         nuevo.nodo = nodoNew;
         nuevo.prioridad = prioridad;
@@ -43,8 +45,11 @@ public class priorityQueue
             }
         }
     }
-    Nodo Devolver(){
+
+    //Devolver el nodo raiz con menor prioridad de la lista
+    public Nodo Devolver(){
         if(raiz != null){
+            length--;
             NodoPQ primero = raiz;
             raiz = raiz.siguiente;
             return primero.nodo;
@@ -52,7 +57,8 @@ public class priorityQueue
         return null;
     }
 
-    void CambiarPrio(Nodo nodoComp, float nuevaPrio){
+    //Cambiar la prioridad de un nodo de la cola
+    public void CambiarPrio(Nodo nodoComp, float nuevaPrio){
         NodoPQ nodoaux = new NodoPQ();
         for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){
             if(nodo.nodo == nodoComp){
@@ -63,6 +69,63 @@ public class priorityQueue
             }
         }
 
+    }
+
+    //Comprobamos si un nodo está en la cola de prioridad
+    public bool EncontrarNodo(Nodo nodoBuscado)
+    {
+        for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente)
+        {
+            if (nodo.nodo == nodoBuscado)
+                return true;
+        }
+        return false;
+    }
+
+    //Devolvemos un nodo que hemos buscado
+    public Nodo ConsultarNodo(Nodo nodoBuscado)
+    {
+        for (NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente)
+        {
+            if (nodo.nodo == nodoBuscado)
+                return nodo.nodo;
+        }
+
+        return null;
+    }
+
+    public void EliminarNodo(Nodo nodoEliminado)
+    {
+        for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente)
+        {
+            if(nodo.nodo == nodoEliminado)
+            {
+                if (nodo == raiz)
+                {
+                    raiz = nodo.siguiente;
+                    nodo.siguiente.anterior = null;
+                    nodo.siguiente = null;
+                }
+                else if (nodo.siguiente == null)
+                {
+                    nodo.anterior.siguiente = null;
+                    nodo.anterior = null;
+                }
+                else
+                {
+                    nodo.anterior.siguiente = nodo.siguiente;
+                    nodo.siguiente.anterior = nodo.anterior;
+                    nodo.siguiente = null;
+                    nodo.anterior = null;
+                }
+                length--;
+            }
+        }
+    }
+
+    public int getLegth()
+    {
+        return length;
     }
 
 }

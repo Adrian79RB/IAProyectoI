@@ -7,21 +7,24 @@ public class MovimientoFantasmas : MonoBehaviour
     // Start is called before the first frame update
     public bool alertado = false;
     public Transform ultimaPosicionConocidaJugador;
-    public float velocidad = 2f;
-    public float velocidadRotacion = 0.15f;
-    public int waypointObjetivo = 0;
-    public float distanciaWaypoint = 0.2f;
     public Transform objetivoActual;
     public Transform homePoint;
+    public Transform nearestNode;
     public Transform[] Waypoints;
 
-    Stack<Transform> pathStack;
+    float velocidad = 2f;
+    float velocidadRotacion = 0.15f;
+    int waypointObjetivo = 0;
+    float distanciaWaypoint = 0.2f;
+    float sphereRadious = 1f;
+
+    Queue<Transform> pathQueue;
     bool ghostFound = false;
 
     void Start()
     {
         objetivoActual = Waypoints[waypointObjetivo];
-        pathStack = new Stack<Transform>();
+        pathQueue = new Queue<Transform>();
     }
 
     // Update is called once per frame
@@ -31,8 +34,11 @@ public class MovimientoFantasmas : MonoBehaviour
         ComprobarWaypoint();
         if (alertado)
         {
-            if(!ghostFound)
+            if (!ghostFound)
+            {
+                encontrarNodoCercano();
                 obtenerCaminoACasa();
+            }
         }
     }
 
@@ -59,10 +65,9 @@ public class MovimientoFantasmas : MonoBehaviour
             }
             else 
             {
-                if (pathStack.Count > 0)
+                if (pathQueue.Count > 0)
                 {
-                    objetivoActual = pathStack.Peek();
-                    pathStack.Pop();
+                    objetivoActual = pathQueue.Dequeue();
                 }
                 else
                     objetivoActual = transform;
@@ -70,34 +75,115 @@ public class MovimientoFantasmas : MonoBehaviour
         }
     }
 
-    void obtenerCaminoACasa()
+    void encontrarNodoCercano() 
     {
-        Nodo nodoActual = homePoint.GetComponent<Nodo>();
-        float distanceToGhost = Vector3.Distance(homePoint.position, transform.position);
-        float distance = 0f;
-        pathStack.Push(homePoint);
-        while (!ghostFound)
+        bool encontrado = false;
+        float minDistance = float.MaxValue;
+        Transform currentNode = null;
+        
+        while (!encontrado) 
         {
-            for (int i = 0; i < nodoActual.arcs.Count; i++)
+            Collider[] waypoints = Physics.OverlapSphere(transform.position, sphereRadious, LayerMask.GetMask("Waypoints"));
+            foreach( Collider waypoint in waypoints)
             {
-                if (Vector3.Distance(nodoActual.arcs[i].transform.position, transform.position) < distanceToGhost)
+                float distance = Vector3.Distance(waypoint.transform.position, transform.position);
+                if (waypoint != null &&  distance < minDistance)
                 {
-                    distance += nodoActual.weigths[i];
-                    nodoActual = nodoActual.arcs[i].transform.GetComponent<Nodo>();
-                    distanceToGhost = Vector3.Distance(nodoActual.transform.position, transform.position);
-                    pathStack.Push(nodoActual.transform);
-                    break;
+                    minDistance = distance;
+                    currentNode = waypoint.transform;
                 }
             }
 
-            for (int i = 0; i < nodoActual.weigths.Count; i++) {
-                if (distanceToGhost < nodoActual.weigths[i])
-                    ghostFound = true;
+            if (currentNode == null)
+                sphereRadious++;
+            else
+            {
+                encontrado = true;
+                sphereRadious = 1f;
             }
         }
 
-        foreach (Transform waypoint in pathStack)
-            Debug.Log("Waypoints camino casa: " + waypoint);
+        nearestNode = currentNode;
+    }
+
+    void obtenerCaminoACasa()
+    {
+        //Creamos el nodo inicial del pathfinding
+        Nodo nodoActual = homePoint.GetComponent<Nodo>();
+        nodoActual.costSoFar = 0;
+        float distanceToGhost = Vector3.Distance(nodoActual.transform.position, transform.position);
+        nodoActual.estimatedTotalCost = nodoActual.costSoFar + distanceToGhost;
+
+        //Creamos las listas abierta y cerrada
+        priorityQueue openedQueue = new priorityQueue();
+        priorityQueue closedQueue = new priorityQueue();
+
+        openedQueue.Insertar(nodoActual, nodoActual.estimatedTotalCost);
+
+        while (openedQueue.getLegth() > 0)
+        {
+            nodoActual = openedQueue.Devolver();
+
+            if (nodoActual.transform == nearestNode)
+                break;
+
+            for (int i = 0; i < nodoActual.arcs.Count; i++)
+            {
+                Nodo nextNode = nodoActual.arcs[i].GetComponent<Nodo>();
+                nextNode.costSoFar = nodoActual.costSoFar + nodoActual.weigths[i];
+
+                if (closedQueue.EncontrarNodo(nextNode))
+                {
+                    Nodo nodoAuxiliar = closedQueue.ConsultarNodo(nextNode);
+                    if (nodoAuxiliar != null && nodoAuxiliar.costSoFar <= nextNode.costSoFar)
+                        continue;
+
+                    closedQueue.EliminarNodo(nodoAuxiliar);
+                    distanceToGhost = nodoAuxiliar.estimatedTotalCost - nodoActual.costSoFar;
+                    nextNode.father = nodoActual;
+                }
+                else if (openedQueue.EncontrarNodo(nextNode))
+                {
+                    Nodo nodoAuxiliar = openedQueue.ConsultarNodo(nextNode);
+                    if (nodoAuxiliar != null && nodoAuxiliar.costSoFar <= nextNode.costSoFar)
+                        continue;
+
+                    distanceToGhost = nodoAuxiliar.estimatedTotalCost - nodoAuxiliar.costSoFar;
+                    nextNode.father = nodoActual;
+                }
+                else
+                {
+                    distanceToGhost = nextNode.costSoFar + Vector3.Distance(transform.position, nextNode.transform.position);
+                    nextNode.father = nodoActual;
+                }
+
+                if (openedQueue.EncontrarNodo(nextNode))
+                    openedQueue.CambiarPrio(nextNode, nextNode.costSoFar + distanceToGhost);
+                else if (closedQueue.EncontrarNodo(nextNode))
+                    closedQueue.CambiarPrio(nextNode, nextNode.costSoFar + distanceToGhost);
+                else
+                    openedQueue.Insertar(nextNode, nextNode.costSoFar + distanceToGhost);
+
+                closedQueue.Insertar(nodoActual, nodoActual.estimatedTotalCost);
+
+            }
+        }
+
+        if (nodoActual.transform != nearestNode)
+        {
+            ghostFound = false;
+            pathQueue.Clear();
+        }
+        else
+        {
+            while(nodoActual.transform == homePoint)
+            {
+                pathQueue.Enqueue(nodoActual.transform);
+                nodoActual = nodoActual.father;
+            }
+
+            ghostFound = true;
+        }
     }
 
     public void cambiarEstadoFantasma(bool estado)

@@ -6,6 +6,9 @@ public class Nodo : MonoBehaviour
 {
     public List<float> weigths;
     public List<GameObject> arcs;
+    public float costSoFar;
+    public float estimatedTotalCost;
+    public Nodo father;
     
     [SerializeField] int id;
     int numRayos = 7;
@@ -15,6 +18,8 @@ public class Nodo : MonoBehaviour
     {
         weigths = new List<float>();
         arcs = new List<GameObject>();
+        costSoFar = -1;
+        estimatedTotalCost = -1;
 
         //Lanzamiento de rayos para construir el grafo
         RaycastHit ray;
