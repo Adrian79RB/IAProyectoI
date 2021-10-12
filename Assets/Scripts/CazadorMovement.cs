@@ -65,8 +65,8 @@ public class CazadorMovement : MonoBehaviour
             
             Vector3 direction = (target.position - transform.position).normalized;
             Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotationTime);
-            transform.position += transform.forward * speed * Time.deltaTime;
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationTime);
+            transform.position += direction * speed * Time.deltaTime;
         }
     }
 

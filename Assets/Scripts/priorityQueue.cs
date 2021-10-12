@@ -23,23 +23,37 @@ public class priorityQueue
         NodoPQ nuevo = new NodoPQ();
         nuevo.nodo = nodoNew;
         nuevo.prioridad = prioridad;
-        if(raiz == null){
+        if(raiz == null){ //Si la cola está vacia
             raiz = nuevo;
+            raiz.anterior = null;
+            raiz.siguiente = null;
+            Debug.Log("Insertando primer nodo");
         }
         else{
-            if(raiz.prioridad > nuevo.prioridad){
+            if(raiz.prioridad > nuevo.prioridad){ //Si el nuevo nodo sustituye al primero
                 NodoPQ auxiliar = raiz;
                 nuevo.siguiente = auxiliar;
                 raiz = nuevo;
-                raiz.siguiente.anterior = nuevo;
+                auxiliar.anterior = raiz;
+                Debug.Log("Insertando nodo en la raiz nodo");
             }
             else{
-                for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){
-                    if(nodo.anterior != null && nuevo.prioridad < nodo.prioridad && nodo.anterior.prioridad < nuevo.prioridad){
+                Debug.Log("Insertando nodo normal");
+                for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){ // Si el nuevo nodo se situa entre dos
+                    if (nodo.anterior != null && nuevo.prioridad < nodo.prioridad && nodo.anterior.prioridad < nuevo.prioridad){
+                        Debug.Log("Nodo Insertado");
                         nodo.anterior.siguiente = nuevo;
                         nuevo.anterior = nodo.anterior;
                         nodo.anterior = nuevo;
                         nuevo.siguiente = nodo;
+                        return;
+                    }
+                    else if(nodo.siguiente == null && nodo.prioridad < nuevo.prioridad) //Si llegamos al último nodo y siguen siendo más pequeños
+                    {
+                        Debug.Log("Nodo Insertado");
+                        nodo.siguiente = nuevo;
+                        nuevo.anterior = nodo;
+                        nuevo.siguiente = null;
                     }
                 }
             }
@@ -126,6 +140,13 @@ public class priorityQueue
     public int getLegth()
     {
         return length;
+    }
+
+    public void MostrarContenido()
+    {
+        int i = 1;
+        for (NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente)
+            Debug.Log("Nodo " + i + ": " + nodo.nodo.name);
     }
 
 }
