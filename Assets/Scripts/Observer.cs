@@ -47,13 +47,9 @@ public class Observer : MonoBehaviour
                 if (raycastHit.collider.transform == player)
                 {
                     //gameEnding.CaughtPlayer ();
-                    ghost.cambiarEstadoFantasma(true);
+                    ghost.cambiarEstadoFantasma(EstadoNPC.Alerted);
                 }
             }
-        }
-        else if(ghost.consultaEstadoFantasma())
-        {
-            //ghost.cambiarEstadoFantasma(false);
         }
     }
 }

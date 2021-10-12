@@ -5,7 +5,6 @@ using UnityEngine;
 public class MovimientoFantasmas : MonoBehaviour
 {
     // Start is called before the first frame update
-    public int estado;
     public Transform ultimaPosicionConocidaJugador;
     public Transform objetivoActual;
     public Transform homePoint;
@@ -17,15 +16,15 @@ public class MovimientoFantasmas : MonoBehaviour
     int waypointObjetivo = 0;
     float distanciaWaypoint = 0.5f;
     float sphereRadious = 1f;
+    [SerializeField]int estado;
 
     Queue<Transform> pathQueue;
-    bool pathFound = false;
 
     void Start()
     {
         objetivoActual = Waypoints[waypointObjetivo];
         pathQueue = new Queue<Transform>();
-        estado = 
+        estado = EstadoNPC.Patrolling;
     }
 
     // Update is called once per frame
@@ -33,13 +32,18 @@ public class MovimientoFantasmas : MonoBehaviour
     {
         Movimiento();
         ComprobarWaypoint();
-        if (alertado)
+        if (estado == EstadoNPC.Alerted)
         {
-            if (!pathFound)
-            {
+            if(nearestNode == null)
                 encontrarNodoCercano();
-                obtenerCaminoACasa(homePoint.GetComponent<Nodo>());
-            }
+
+            obtenerCamino(homePoint.GetComponent<Nodo>(), nearestNode.GetComponent<Nodo>());
+            cambiarEstadoFantasma(EstadoNPC.GoingHome);
+        }
+        else if(estado == EstadoNPC.SearchingPatrol)
+        {
+            obtenerCamino(nearestNode.GetComponent<Nodo>(), homePoint.GetComponent<Nodo>());
+            cambiarEstadoFantasma(EstadoNPC.GoingPatrol);
         }
     }
 
@@ -52,7 +56,7 @@ public class MovimientoFantasmas : MonoBehaviour
     void ComprobarWaypoint(){
         float dist = Vector3.Distance(objetivoActual.position, this.transform.position);
         if(dist < distanciaWaypoint){
-            if (!alertado)
+            if (estado == EstadoNPC.Patrolling)
             {
                 if (waypointObjetivo + 1 == Waypoints.Length)
                 {
@@ -64,14 +68,31 @@ public class MovimientoFantasmas : MonoBehaviour
                 }
                 objetivoActual = Waypoints[waypointObjetivo];
             }
-            else 
+            else if(estado == EstadoNPC.GoingHome)
             {
                 if (pathQueue.Count > 0)
                 {
                     objetivoActual = pathQueue.Dequeue();
                 }
                 else
-                    objetivoActual = transform;
+                {
+                    cambiarEstadoFantasma(EstadoNPC.Waiting);
+                }
+            }
+            else if(estado == EstadoNPC.GoingPatrol)
+            {
+                if (pathQueue.Count > 0)
+                {
+                    objetivoActual = pathQueue.Dequeue();
+                }
+                else
+                {
+                    cambiarEstadoFantasma(EstadoNPC.Patrolling);
+                }
+            }
+            else if(estado == EstadoNPC.Waiting)
+            {
+                objetivoActual = transform;
             }
         }
     }
@@ -107,7 +128,7 @@ public class MovimientoFantasmas : MonoBehaviour
         nearestNode = currentNode;
     }
 
-    void obtenerCaminoACasa(Nodo target)
+    void obtenerCamino(Nodo target, Nodo start)
     {
         //Creamos el nodo inicial del pathfinding
         Nodo nodoActual = target;
@@ -126,7 +147,7 @@ public class MovimientoFantasmas : MonoBehaviour
             nodoActual = openedQueue.Devolver();
             Debug.Log("Nodo actual: " + nodoActual.transform.name);
 
-            if (nodoActual.transform == nearestNode)
+            if (nodoActual == start)
                 break;
 
             for (int i = 0; i < nodoActual.arcs.Count; i++)
@@ -177,15 +198,14 @@ public class MovimientoFantasmas : MonoBehaviour
             openedQueue.MostrarContenido();
         }
 
-        if (nodoActual.transform != nearestNode)
+        if (nodoActual.transform != start.transform)
         {
-            pathFound = false;
             pathQueue.Clear();
         }
         else
         {
             Debug.Log("Haciendo el camino de padres.");
-            while(nodoActual.transform != target.transform)
+            while(nodoActual != target)
             {
                 Debug.Log("Metemos en pathQueue el nodo: " + nodoActual.transform.name);
                 pathQueue.Enqueue(nodoActual.transform);
@@ -193,18 +213,17 @@ public class MovimientoFantasmas : MonoBehaviour
             }
 
             pathQueue.Enqueue(nodoActual.transform);
-            pathFound = true;
         }
     }
 
-    public void cambiarEstadoFantasma(bool estado)
+    public void cambiarEstadoFantasma(int newEstado)
     {
-        alertado = estado;
+        estado = newEstado;
     }
 
-    public bool consultaEstadoFantasma()
+    public int consultaEstadoFantasma()
     {
-        return alertado;
+        return estado;
     }
 
     void AvisarCazador(GameObject cazador){
@@ -219,15 +238,12 @@ public class MovimientoFantasmas : MonoBehaviour
     }
 
     public void AvisoDeGargola(){
-        cambiarEstadoFantasma(true);
-        pathFound = false;
+        cambiarEstadoFantasma(EstadoNPC.Alerted);
     }
 
     public void AvisoDeCazador()
     {
-        cambiarEstadoFantasma(false);
-        pathFound = false;
-
+        cambiarEstadoFantasma(EstadoNPC.GoingPatrol);
     }
 
     
