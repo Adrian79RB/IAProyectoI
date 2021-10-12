@@ -29,17 +29,17 @@ public class priorityQueue
         else{
             if(raiz.prioridad > nuevo.prioridad){
                 NodoPQ auxiliar = raiz;
+                nuevo.siguiente = auxiliar;
                 raiz = nuevo;
-                raiz.siguiente = auxiliar;
+                raiz.siguiente.anterior = nuevo;
             }
             else{
                 for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){
-                    if(nuevo.prioridad < nodo.prioridad && nodo.anterior.prioridad < nuevo.prioridad){
+                    if(nodo.anterior != null && nuevo.prioridad < nodo.prioridad && nodo.anterior.prioridad < nuevo.prioridad){
                         nodo.anterior.siguiente = nuevo;
                         nuevo.anterior = nodo.anterior;
                         nodo.anterior = nuevo;
                         nuevo.siguiente = nodo;
-
                     }
                 }
             }

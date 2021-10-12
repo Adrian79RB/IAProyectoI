@@ -1487,12 +1487,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   alertado: 0
   ultimaPosicionConocidaJugador: {fileID: 0}
-  velocidad: 2
-  velocidadRotacion: 0.15
-  waypointObjetivo: 0
-  distanciaWaypoint: 0.2
   objetivoActual: {fileID: 0}
   homePoint: {fileID: 258775622}
+  nearestNode: {fileID: 0}
   Waypoints:
   - {fileID: 1997228603}
   - {fileID: 1976579092}
@@ -2170,6 +2167,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6986812540457888193, guid: abeb186619cc7e6419cb81e1e4dfa162,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abeb186619cc7e6419cb81e1e4dfa162, type: 3}

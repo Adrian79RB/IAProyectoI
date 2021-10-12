@@ -43,10 +43,10 @@ public class MovimientoFantasmas : MonoBehaviour
     }
 
     void Movimiento(){
-        Vector3 direccion = (objetivoActual.transform.position-this.transform.position).normalized;
-        Quaternion rotacion = Quaternion.LookRotation(direccion,transform.up);
-        this.transform.position = this.transform.position + direccion * velocidad * Time.deltaTime;
-        transform.rotation = Quaternion.Lerp( this.transform.rotation, rotacion, velocidadRotacion);
+        Vector3 direccion = (objetivoActual.transform.position - this.transform.position).normalized;
+        Quaternion rotacion = Quaternion.LookRotation(direccion, transform.up);
+        transform.rotation = Quaternion.Slerp(this.transform.rotation, rotacion, velocidadRotacion);
+        this.transform.position = this.transform.position + transform.forward * velocidad * Time.deltaTime;
     }
     void ComprobarWaypoint(){
         float dist = Vector3.Distance(objetivoActual.position, this.transform.position);
@@ -65,6 +65,7 @@ public class MovimientoFantasmas : MonoBehaviour
             }
             else 
             {
+                Debug.Log("Cola Nodos: " + pathQueue.Count);
                 if (pathQueue.Count > 0)
                 {
                     objetivoActual = pathQueue.Dequeue();
@@ -123,6 +124,7 @@ public class MovimientoFantasmas : MonoBehaviour
         while (openedQueue.getLegth() > 0)
         {
             nodoActual = openedQueue.Devolver();
+            Debug.Log("Nodo actual: " + nodoActual.transform.name);
 
             if (nodoActual.transform == nearestNode)
                 break;
@@ -130,43 +132,47 @@ public class MovimientoFantasmas : MonoBehaviour
             for (int i = 0; i < nodoActual.arcs.Count; i++)
             {
                 Nodo nextNode = nodoActual.arcs[i].GetComponent<Nodo>();
-                nextNode.costSoFar = nodoActual.costSoFar + nodoActual.weigths[i];
+                float distanceToNextNode = nodoActual.costSoFar + nodoActual.weigths[i];
 
                 if (closedQueue.EncontrarNodo(nextNode))
                 {
                     Nodo nodoAuxiliar = closedQueue.ConsultarNodo(nextNode);
-                    if (nodoAuxiliar != null && nodoAuxiliar.costSoFar <= nextNode.costSoFar)
+                    Debug.Log("Nodo: " + nodoAuxiliar.transform.name + "; CostSoFar: " + nodoAuxiliar.costSoFar + "; Coste Estimado: " + nodoAuxiliar.estimatedTotalCost);
+                    Debug.Log("Nodo: " + nextNode.transform.name + "; CostSoFar: " + distanceToNextNode);
+                    if (nodoAuxiliar != null && nodoAuxiliar.costSoFar <= distanceToNextNode)
                         continue;
 
+                    Debug.Log("nextNodo está más cerca del inicio");
                     closedQueue.EliminarNodo(nodoAuxiliar);
                     distanceToGhost = nodoAuxiliar.estimatedTotalCost - nodoActual.costSoFar;
-                    nextNode.father = nodoActual;
                 }
                 else if (openedQueue.EncontrarNodo(nextNode))
                 {
                     Nodo nodoAuxiliar = openedQueue.ConsultarNodo(nextNode);
-                    if (nodoAuxiliar != null && nodoAuxiliar.costSoFar <= nextNode.costSoFar)
+                    Debug.Log("Nodo: " + nodoAuxiliar.transform.name + "; CostSoFar: " + nodoAuxiliar.costSoFar + "; Coste Estimado: " + nodoAuxiliar.estimatedTotalCost);
+                    Debug.Log("Nodo: " + nextNode.transform.name + "; CostSoFar: " + distanceToNextNode);
+                    if (nodoAuxiliar != null && nodoAuxiliar.costSoFar <= distanceToNextNode)
                         continue;
 
+                    Debug.Log("nextNodo está más cerca del inicio");
                     distanceToGhost = nodoAuxiliar.estimatedTotalCost - nodoAuxiliar.costSoFar;
-                    nextNode.father = nodoActual;
                 }
                 else
                 {
-                    distanceToGhost = nextNode.costSoFar + Vector3.Distance(transform.position, nextNode.transform.position);
-                    nextNode.father = nodoActual;
+                    distanceToGhost = Vector3.Distance(transform.position, nextNode.transform.position);
                 }
 
-                if (openedQueue.EncontrarNodo(nextNode))
-                    openedQueue.CambiarPrio(nextNode, nextNode.costSoFar + distanceToGhost);
-                else if (closedQueue.EncontrarNodo(nextNode))
-                    closedQueue.CambiarPrio(nextNode, nextNode.costSoFar + distanceToGhost);
-                else
-                    openedQueue.Insertar(nextNode, nextNode.costSoFar + distanceToGhost);
+                nextNode.costSoFar = distanceToNextNode;
+                nextNode.estimatedTotalCost = distanceToNextNode + distanceToGhost;
+                nextNode.father = nodoActual;
 
-                closedQueue.Insertar(nodoActual, nodoActual.estimatedTotalCost);
+                if (!openedQueue.EncontrarNodo(nextNode))
+                    openedQueue.Insertar(nextNode, nextNode.estimatedTotalCost);
+                else
+                    openedQueue.CambiarPrio(nextNode, nextNode.estimatedTotalCost);
 
             }
+            closedQueue.Insertar(nodoActual, nodoActual.estimatedTotalCost);
         }
 
         if (nodoActual.transform != nearestNode)
@@ -176,10 +182,13 @@ public class MovimientoFantasmas : MonoBehaviour
         }
         else
         {
-            while(nodoActual.transform == homePoint)
+            Debug.Log("Haciendo el camino de padres.");
+            while(nodoActual.transform != homePoint)
             {
+                Debug.Log("Metemos en pathQueue el nodo: " + nodoActual.transform.name);
                 pathQueue.Enqueue(nodoActual.transform);
                 nodoActual = nodoActual.father;
+                break;
             }
 
             ghostFound = true;
