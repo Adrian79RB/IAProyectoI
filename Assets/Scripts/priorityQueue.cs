@@ -27,7 +27,6 @@ public class priorityQueue
             raiz = nuevo;
             raiz.anterior = null;
             raiz.siguiente = null;
-            Debug.Log("Insertando primer nodo");
         }
         else{
             if(raiz.prioridad > nuevo.prioridad){ //Si el nuevo nodo sustituye al primero
@@ -35,13 +34,10 @@ public class priorityQueue
                 nuevo.siguiente = auxiliar;
                 raiz = nuevo;
                 auxiliar.anterior = raiz;
-                Debug.Log("Insertando nodo en la raiz nodo");
             }
             else{
-                Debug.Log("Insertando nodo normal");
                 for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){ // Si el nuevo nodo se situa entre dos
-                    if (nodo.anterior != null && nuevo.prioridad < nodo.prioridad && nodo.anterior.prioridad < nuevo.prioridad){
-                        Debug.Log("Nodo Insertado");
+                    if (nodo.anterior != null && nuevo.prioridad < nodo.prioridad && nuevo.prioridad > nodo.anterior.prioridad){
                         nodo.anterior.siguiente = nuevo;
                         nuevo.anterior = nodo.anterior;
                         nodo.anterior = nuevo;
@@ -50,7 +46,6 @@ public class priorityQueue
                     }
                     else if(nodo.siguiente == null && nodo.prioridad < nuevo.prioridad) //Si llegamos al último nodo y siguen siendo más pequeños
                     {
-                        Debug.Log("Nodo Insertado");
                         nodo.siguiente = nuevo;
                         nuevo.anterior = nodo;
                         nuevo.siguiente = null;
@@ -63,9 +58,14 @@ public class priorityQueue
     //Devolver el nodo raiz con menor prioridad de la lista
     public Nodo Devolver(){
         if(raiz != null){
-            length--;
             NodoPQ primero = raiz;
             raiz = raiz.siguiente;
+
+            if (raiz != null)
+                raiz.anterior = null;
+
+            primero.siguiente = null;
+            length--;
             return primero.nodo;
         }
         return null;
@@ -73,7 +73,7 @@ public class priorityQueue
 
     //Cambiar la prioridad de un nodo de la cola
     public void CambiarPrio(Nodo nodoComp, float nuevaPrio){
-        NodoPQ nodoaux = new NodoPQ();
+
         for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){
             if(nodo.nodo == nodoComp){
                 if(nodo.anterior != null)
@@ -114,29 +114,32 @@ public class priorityQueue
 
     public void EliminarNodo(Nodo nodoEliminado)
     {
-        for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente)
+        if (length > 0)
         {
-            if(nodo.nodo == nodoEliminado)
+            for (NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente)
             {
-                if (nodo == raiz)
+                if (nodo.nodo == nodoEliminado)
                 {
-                    raiz = nodo.siguiente;
-                    nodo.siguiente.anterior = null;
-                    nodo.siguiente = null;
+                    if (nodo == raiz)
+                    {
+                        raiz = nodo.siguiente;
+                        nodo.siguiente.anterior = null;
+                        nodo.siguiente = null;
+                    }
+                    else if (nodo.siguiente == null)
+                    {
+                        nodo.anterior.siguiente = null;
+                        nodo.anterior = null;
+                    }
+                    else
+                    {
+                        nodo.anterior.siguiente = nodo.siguiente;
+                        nodo.siguiente.anterior = nodo.anterior;
+                        nodo.siguiente = null;
+                        nodo.anterior = null;
+                    }
+                    length--;
                 }
-                else if (nodo.siguiente == null)
-                {
-                    nodo.anterior.siguiente = null;
-                    nodo.anterior = null;
-                }
-                else
-                {
-                    nodo.anterior.siguiente = nodo.siguiente;
-                    nodo.siguiente.anterior = nodo.anterior;
-                    nodo.siguiente = null;
-                    nodo.anterior = null;
-                }
-                length--;
             }
         }
     }
@@ -150,7 +153,10 @@ public class priorityQueue
     {
         int i = 1;
         for (NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente)
+        {
             Debug.Log("Nodo " + i + ": " + nodo.nodo.name);
+            i++;
+        }
     }
 
 }

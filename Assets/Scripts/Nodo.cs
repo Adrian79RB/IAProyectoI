@@ -11,7 +11,7 @@ public class Nodo : MonoBehaviour
     public Nodo father;
     
     int id;
-    int numRayos = 7;
+    [SerializeField]int numRayos = 4;
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +25,8 @@ public class Nodo : MonoBehaviour
         RaycastHit ray;
         for (int i = 0; i < numRayos; i++)
         {
-            float angle = (Mathf.PI / 4 * i) * Mathf.Rad2Deg;
+            //float angle = (Mathf.PI / 4 * i) * Mathf.Rad2Deg; Da error si está en mitad de una sala
+            float angle = (Mathf.PI / 2 * i) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.up);
 
             if (Physics.Raycast(transform.position, transform.TransformDirection(new Vector3(0, 0, 1)), out ray, 100.0f) && ray.transform.tag == "Waypoint")

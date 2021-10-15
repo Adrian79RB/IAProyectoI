@@ -98269,7 +98269,7 @@ PrefabInstance:
         type: 3}
       propertyPath: patrolEnd
       value: 
-      objectReference: {fileID: 604346482}
+      objectReference: {fileID: 26176792}
     - target: {fileID: 6838823582360122002, guid: abeb186619cc7e6419cb81e1e4dfa162,
         type: 3}
       propertyPath: patrolStart

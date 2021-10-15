@@ -160,7 +160,9 @@ public class MovimientoFantasmas : MonoBehaviour
 
         while (openedQueue.getLegth() > 0)
         {
+            Debug.Log("Tamaño cola abierta antes de Devolver: " + openedQueue.getLegth());
             nodoActual = openedQueue.Devolver();
+            Debug.Log("Tamaño cola abierta despues de Devolver: " + openedQueue.getLegth());
             Debug.Log("Nodo actual: " + nodoActual.transform.name);
 
             if (nodoActual == start)
@@ -208,10 +210,6 @@ public class MovimientoFantasmas : MonoBehaviour
 
             }
             closedQueue.Insertar(nodoActual, nodoActual.estimatedTotalCost);
-            Debug.Log("Cola cerrada");
-            closedQueue.MostrarContenido();
-            Debug.Log("Cola abierta");
-            openedQueue.MostrarContenido();
         }
 
         if (nodoActual.transform == start.transform)
