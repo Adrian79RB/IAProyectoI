@@ -76,8 +76,12 @@ public class priorityQueue
         NodoPQ nodoaux = new NodoPQ();
         for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente){
             if(nodo.nodo == nodoComp){
-                nodo.anterior.siguiente = nodo.siguiente;
-                nodo.siguiente.anterior = nodo.anterior;
+                if(nodo.anterior != null)
+                    nodo.anterior.siguiente = nodo.siguiente;
+                if(nodo.siguiente != null)
+                    nodo.siguiente.anterior = nodo.anterior;
+                nodo.anterior = null;
+                nodo.siguiente = null;
                 Insertar(nodoComp, nuevaPrio);
                 return;
             }

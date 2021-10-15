@@ -453,6 +453,7 @@ GameObject:
   - component: {fileID: 3751484280772504296}
   - component: {fileID: 8963077223797400650}
   - component: {fileID: 6986812540457888193}
+  - component: {fileID: 6838823582360122002}
   m_Layer: 0
   m_Name: Ghost
   m_TagString: Untagged
@@ -622,6 +623,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &6838823582360122002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5075534488604402034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25a865db327f09640b8a123e542561f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ultimaPosicionConocidaJugador: {fileID: 0}
+  patrolStart: {fileID: 0}
+  patrolEnd: {fileID: 0}
+  homePoint: {fileID: 0}
+  nearestNode: {fileID: 0}
+  estado: 0
 --- !u!1 &5863192054190611860
 GameObject:
   m_ObjectHideFlags: 0

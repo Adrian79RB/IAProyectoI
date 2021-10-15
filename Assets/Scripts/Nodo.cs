@@ -10,7 +10,7 @@ public class Nodo : MonoBehaviour
     public float estimatedTotalCost;
     public Nodo father;
     
-    [SerializeField] int id;
+    int id;
     int numRayos = 7;
 
     // Start is called before the first frame update
@@ -40,5 +40,10 @@ public class Nodo : MonoBehaviour
     public void setId(int newId)
     {
         id = newId;
+    }
+
+    public int getId()
+    {
+        return id;
     }
 }
