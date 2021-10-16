@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class Observer : MonoBehaviour
 {
-    public Transform player;
     public GameEnding gameEnding;
-    
+
+    Transform player;
     MovimientoFantasmas ghost;
     bool m_IsPlayerInRange;
 
     private void Start()
     {
         ghost = GetComponentInParent<MovimientoFantasmas>();
+        player = GameObject.Find("JohnLemon").transform;
     }
 
     //cuando algo entra en su campo de visión comprueba si se trata del jugador

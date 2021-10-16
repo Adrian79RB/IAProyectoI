@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Coins
   - Waypoint
+  - cazador
+  - fantasma
+  - gargola
   layers:
   - Default
   - TransparentFX
