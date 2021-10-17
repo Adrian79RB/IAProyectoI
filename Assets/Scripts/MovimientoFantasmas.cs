@@ -20,8 +20,8 @@ public class MovimientoFantasmas : MonoBehaviour
 
     Transform WaypointFather;
     Transform objetivoActual;
-    int[] pathWaypoints;
-    int[] patrolWaypoints;
+    [SerializeField]int[] pathWaypoints;
+    [SerializeField]int[] patrolWaypoints;
 
     void Start()
     {
@@ -36,7 +36,34 @@ public class MovimientoFantasmas : MonoBehaviour
     void Update()
     {
         Movimiento();
-        ControlDeEstados();
+        //ControlDeEstados();
+        if (estado == EstadoNPC.Patrolling)
+        {
+            float dist = Vector3.Distance(objetivoActual.position, transform.position);
+            if (objetivoActual == patrolEnd && dist < distanciaWaypoint)
+            {
+                obtenerCamino(patrolStart.GetComponent<Nodo>(), patrolEnd.GetComponent<Nodo>(), patrolWaypoints);
+            }
+            else if (objetivoActual == patrolStart && dist < distanciaWaypoint)
+            {
+                obtenerCamino(patrolEnd.GetComponent<Nodo>(), patrolStart.GetComponent<Nodo>(), patrolWaypoints);
+            }
+        }
+        else if (estado == EstadoNPC.Alerted)
+        {
+            if (nearestNode == null)
+                encontrarNodoCercano();
+
+            obtenerCamino(homePoint.GetComponent<Nodo>(), nearestNode.GetComponent<Nodo>(), pathWaypoints);
+            cambiarEstadoFantasma(EstadoNPC.GoingHome);
+            objetivoActual = nearestNode;
+        }
+        else if (estado == EstadoNPC.SearchingPatrol)
+        {
+            obtenerCamino(nearestNode.GetComponent<Nodo>(), homePoint.GetComponent<Nodo>(), pathWaypoints);
+            cambiarEstadoFantasma(EstadoNPC.GoingPatrol);
+            objetivoActual = homePoint;
+        }
         ComprobarWaypoint();
     }
 
@@ -221,6 +248,8 @@ public class MovimientoFantasmas : MonoBehaviour
         {
             while(nodoActual != target)
             {
+                Debug.Log("x Nodo Actual: " + nodoActual.name);
+                Debug.Log("x Padre: " + nodoActual.father.name);
                 nodesList[nodoActual.getId()] = nodoActual.father.getId();
                 Nodo aux = nodoActual.father;
                 nodoActual.father = null;

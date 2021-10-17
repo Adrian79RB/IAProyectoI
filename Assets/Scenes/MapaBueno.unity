@@ -3204,6 +3204,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Waypoint (104)
       objectReference: {fileID: 0}
+    - target: {fileID: 4398672163102086470, guid: 6dccd6ba3874ac14383aa1fc1658e13f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4398672163102086471, guid: 6dccd6ba3874ac14383aa1fc1658e13f,
         type: 3}
       propertyPath: m_RootOrder
@@ -3212,7 +3217,7 @@ PrefabInstance:
     - target: {fileID: 4398672163102086471, guid: 6dccd6ba3874ac14383aa1fc1658e13f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 89.52
+      value: 90.11
       objectReference: {fileID: 0}
     - target: {fileID: 4398672163102086471, guid: 6dccd6ba3874ac14383aa1fc1658e13f,
         type: 3}
@@ -52353,10 +52358,19 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1580709129}
     m_Modifications:
+    - target: {fileID: 167509646, guid: abeb186619cc7e6419cb81e1e4dfa162, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5075534488604402034, guid: abeb186619cc7e6419cb81e1e4dfa162,
         type: 3}
       propertyPath: m_Name
       value: Ghost (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5075534488604402034, guid: abeb186619cc7e6419cb81e1e4dfa162,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6838823582360122002, guid: abeb186619cc7e6419cb81e1e4dfa162,
         type: 3}
@@ -98346,6 +98360,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1580709129}
     m_Modifications:
+    - target: {fileID: 167509646, guid: abeb186619cc7e6419cb81e1e4dfa162, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5075534488604402034, guid: abeb186619cc7e6419cb81e1e4dfa162,
         type: 3}
       propertyPath: m_Name
@@ -98421,6 +98439,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 167509646, guid: abeb186619cc7e6419cb81e1e4dfa162, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abeb186619cc7e6419cb81e1e4dfa162, type: 3}
