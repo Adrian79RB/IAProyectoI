@@ -98362,7 +98362,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 167509646, guid: abeb186619cc7e6419cb81e1e4dfa162, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5075534488604402034, guid: abeb186619cc7e6419cb81e1e4dfa162,
         type: 3}

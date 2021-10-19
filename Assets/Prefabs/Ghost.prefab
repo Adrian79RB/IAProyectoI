@@ -454,7 +454,6 @@ GameObject:
   - component: {fileID: 8963077223797400650}
   - component: {fileID: 6986812540457888193}
   - component: {fileID: 6838823582360122002}
-  - component: {fileID: 167509646}
   m_Layer: 0
   m_Name: Ghost
   m_TagString: fantasma
@@ -642,19 +641,8 @@ MonoBehaviour:
   homePoint: {fileID: 0}
   nearestNode: {fileID: 0}
   estado: 0
---- !u!135 &167509646
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5075534488604402034}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 15
-  m_Center: {x: 0, y: 0, z: 0}
+  pathWaypoints: 
+  patrolWaypoints: 
 --- !u!1 &5863192054190611860
 GameObject:
   m_ObjectHideFlags: 0
