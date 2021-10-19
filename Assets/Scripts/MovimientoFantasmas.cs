@@ -150,6 +150,7 @@ public class MovimientoFantasmas : MonoBehaviour
         }
     }
 
+    //Busca el nodo mas cercano al fantasma
     void encontrarNodoCercano() 
     {
         bool encontrado = false;
