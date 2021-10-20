@@ -18,7 +18,7 @@ public class Monedas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Contador = " + activarSalida.contadorMonedas);
+        //Debug.Log("Contador = " + activarSalida.contadorMonedas);
     }
 
     private void OnTriggerEnter(Collider other)

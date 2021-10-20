@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,74 +6,144 @@ using UnityEngine;
 public class CazadorMovement : MonoBehaviour
 {
     public Transform player;
-    public GameObject waypoints;
+    public Transform homePoint;
+    public Transform nearestNode;
+    public int cazadorId;
 
-    [SerializeField]Queue<Transform> pathStack;
-    float speed = 3.0f;
-    float rotationTime = 0.1f;
-    Transform target = null;
-    bool pathFound = false;
-    bool alertado = false;
+    float velocidadCaza = 5.0f;
+    float velocidadRotacion = 0.1f;
+    float distanciaWaypoint = 0.5f;
 
-    // Start is called before the first frame update
+    [SerializeField]int estado; //Alerted: Jugador coge monedas; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca al jugador; GoingPatrol: Persigue al jugador
+
+    Transform WaypointFather; //Guardamos en cada indice correspondiente a un nodo, el id de su padre con el que forma el camino al objetivo
+    Transform objetivoActual;
+    int[] pathWaypoints;
+
     void Start()
     {
-        target = transform;
-        waypoints = GameObject.Find("Waypoints");
-        pathStack = new Queue<Transform>();
+        WaypointFather = GameObject.Find("PadreWaypoints").transform;
+        objetivoActual = transform;
+        pathWaypoints = new int[WaypointFather.childCount];
+        estado = EstadoNPC.Waiting;
     }
 
     private void Update()
     {
-        if (!pathFound && alertado) {
-            float pastDistanceToMe = 0.0f;
-            float pastDistanceToPlayer = Vector3.Distance(player.transform.position, transform.position);
+        Movimiento();
+        ControlDeEstados();
+        ComprobarWaypoints();
+    }
 
-            for (int i = 0; i < waypoints.transform.childCount; i++) {
-                Transform currentWaypoint = waypoints.transform.GetChild(i);
+    void Movimiento()
+    {
+        Vector3 direction = (objetivoActual.position - transform.position).normalized;
+        Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, velocidadRotacion);
+        transform.position += direction * velocidadCaza * Time.deltaTime;
+    }
 
-                if (Vector3.Distance(transform.position, currentWaypoint.position) > pastDistanceToMe
-                    && Vector3.Distance(player.transform.position, currentWaypoint.position) < pastDistanceToPlayer) {
-                    pathStack.Enqueue(currentWaypoint);
-                    pastDistanceToMe = Vector3.Distance(transform.position, currentWaypoint.position);
-                    pastDistanceToPlayer = Vector3.Distance(player.transform.position, currentWaypoint.position);
+    private void ControlDeEstados()
+    {
+        if (estado == EstadoNPC.Alerted)
+        {
+            if (nearestNode == null)
+                nearestNode = PathfindingClass.encontrarNodoCercano(transform);
+
+            PathfindingClass.obtenerCamino(transform, homePoint.GetComponent<Nodo>(), nearestNode.GetComponent<Nodo>(), ref pathWaypoints);
+            cambiarEstadoCazador(EstadoNPC.GoingHome);
+            objetivoActual = nearestNode;
+        }
+        else if (estado == EstadoNPC.SearchingPatrol || estado == EstadoNPC.GoingPatrol)
+        {
+            Transform nodoCazador = PathfindingClass.encontrarNodoCercano(transform);
+            Transform objetivo = PathfindingClass.encontrarNodoCercano(player);
+            Nodo nodoObjetivo = objetivo.GetComponent<Nodo>();
+            if (nodoObjetivo != null)
+            {
+                if (cazadorId == 1 && nodoObjetivo.arcs.Count > cazadorId)
+                    objetivo = nodoObjetivo.arcs[cazadorId].transform;
+                else if (cazadorId == 2 && nodoObjetivo.arcs.Count > cazadorId)
+                    objetivo = nodoObjetivo.arcs[cazadorId].transform;
+
+                if (estado == EstadoNPC.SearchingPatrol)
+                {
+                    nearestNode = objetivo;
+                    PathfindingClass.obtenerCamino(transform, nearestNode.GetComponent<Nodo>(), nodoCazador.GetComponent<Nodo>(), ref pathWaypoints);
+                    cambiarEstadoCazador(EstadoNPC.GoingPatrol);
+                    objetivoActual = nodoCazador;
+                }
+                else if (estado == EstadoNPC.GoingPatrol && objetivo != nearestNode)
+                {
+                    nearestNode = objetivo;
+                    PathfindingClass.obtenerCamino(transform, nearestNode.GetComponent<Nodo>(), nodoCazador.GetComponent<Nodo>(), ref pathWaypoints);
+                    cambiarEstadoCazador(EstadoNPC.GoingPatrol);
                 }
             }
-
-            foreach (Transform waypoint in pathStack)
-                Debug.Log("Waypoints: " + waypoint.name);
-
-            pathFound = true;
         }
     }
 
-
-    void FixedUpdate()
+    void ComprobarWaypoints()
     {
-        if (pathFound) {
-            if (Vector3.Distance(target.position, transform.position) < 0.5f) {
-
-                if (pathStack.Count <= 0 || Vector3.Distance(target.position, transform.position) > Vector3.Distance(player.position, transform.position))
-                    target = player;
+        float dist = Vector3.Distance(objetivoActual.position, transform.position);
+        if(dist < distanciaWaypoint)
+        {
+            if(estado == EstadoNPC.GoingHome)
+            {
+                if(objetivoActual != homePoint)
+                {
+                    int id = objetivoActual.GetComponent<Nodo>().getId();
+                    objetivoActual = WaypointFather.GetChild(pathWaypoints[id]);
+                }
                 else
                 {
-                    target = pathStack.Peek();
-                    pathStack.Dequeue();
+                    cambiarEstadoCazador(EstadoNPC.Waiting);
                 }
-
-                Debug.Log("Target: " + target.name);
             }
-            
-            Vector3 direction = (target.position - transform.position).normalized;
-            Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationTime);
-            transform.position += direction * speed * Time.deltaTime;
+            else if(estado == EstadoNPC.GoingPatrol)
+            {
+                if(objetivoActual != nearestNode)
+                {
+                    int id = objetivoActual.GetComponent<Nodo>().getId();
+                    objetivoActual = WaypointFather.GetChild(pathWaypoints[id]);
+                }
+                else
+                {
+                    objetivoActual = player;
+                }
+            }
+            else if(estado == EstadoNPC.Waiting)
+            {
+                objetivoActual = transform;
+            }
         }
+    }
+
+    void cambiarEstadoCazador(int nuevoEstado)
+    {
+        estado = nuevoEstado;
+    }
+
+    //--------------------------------------
+    //Comunicación entre NPCs
+    //--------------------------------------
+
+    void AvisarFantasma(GameObject fantasma)
+    {
+        fantasma.GetComponent<MovimientoFantasmas>().AvisoDeCazador();
     }
 
     public void AvisoDeFantasma(){
-        alertado = true;
+        cambiarEstadoCazador(EstadoNPC.SearchingPatrol);
     }
 
-    
+    public void AvisoDeMonedas()
+    {
+        cambiarEstadoCazador(EstadoNPC.Alerted);
+    }
+
+    public void AvisoDeGargola()
+    {
+        cambiarEstadoCazador(EstadoNPC.SearchingPatrol);
+    }
 }

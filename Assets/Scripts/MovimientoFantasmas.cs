@@ -16,13 +16,13 @@ public class MovimientoFantasmas : MonoBehaviour
     float velocidadRotacion = 0.15f;
     float distanciaWaypoint = 0.5f;
     float sphereRadious = 1f;
-    float ghostCallRadious = 20f;
-    [SerializeField]int estado;
+    float ghostCallRadious = 25f;
+    [SerializeField]int estado; //Patrolling: Haciendo su patrulla; Alerted: Jugador es detectado; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca lugar patrulla; GoingPatrol: Va hasta la zona patrulla
 
     Transform WaypointFather;
     Transform objetivoActual;
-    [SerializeField]int[] pathWaypoints;
-    [SerializeField]int[] patrolWaypoints;
+    int[] pathWaypoints;
+    int[] patrolWaypoints;
 
     void Start()
     {
@@ -59,29 +59,28 @@ public class MovimientoFantasmas : MonoBehaviour
             float dist = Vector3.Distance(objetivoActual.position, transform.position);
             if (objetivoActual == patrolEnd && dist < distanciaWaypoint)
             {
-                obtenerCamino(patrolStart.GetComponent<Nodo>(), patrolEnd.GetComponent<Nodo>(), patrolWaypoints);
+                PathfindingClass.obtenerCamino(transform, patrolStart.GetComponent<Nodo>(), patrolEnd.GetComponent<Nodo>(), ref patrolWaypoints);
             }
             else if (objetivoActual == patrolStart && dist < distanciaWaypoint)
             {
-                obtenerCamino(patrolEnd.GetComponent<Nodo>(), patrolStart.GetComponent<Nodo>(), patrolWaypoints);
+                PathfindingClass.obtenerCamino(transform, patrolEnd.GetComponent<Nodo>(), patrolStart.GetComponent<Nodo>(), ref patrolWaypoints);
             }
         }
         else if (estado == EstadoNPC.Alerted)
         {
-            if (nearestNode == null)
-                encontrarNodoCercano();
+            nearestNode = PathfindingClass.encontrarNodoCercano(transform);
 
-            obtenerCamino(homePoint.GetComponent<Nodo>(), nearestNode.GetComponent<Nodo>(), pathWaypoints);
+            PathfindingClass.obtenerCamino(transform, homePoint.GetComponent<Nodo>(), nearestNode.GetComponent<Nodo>(), ref pathWaypoints);
             cambiarEstadoFantasma(EstadoNPC.GoingHome);
             objetivoActual = nearestNode;
         }
-        else if( estado == EstadoNPC.GoingHome)
+        else if (estado == EstadoNPC.GoingHome)
         {
             LanzarAvisoFantasma();
         }
         else if (estado == EstadoNPC.SearchingPatrol)
         {
-            obtenerCamino(nearestNode.GetComponent<Nodo>(), homePoint.GetComponent<Nodo>(), pathWaypoints);
+            PathfindingClass.obtenerCamino(transform, nearestNode.GetComponent<Nodo>(), homePoint.GetComponent<Nodo>(), ref pathWaypoints);
             cambiarEstadoFantasma(EstadoNPC.GoingPatrol);
             objetivoActual = homePoint;
         }
@@ -89,7 +88,7 @@ public class MovimientoFantasmas : MonoBehaviour
 
     void ComprobarWaypoint()
     {
-        float dist = Vector3.Distance(objetivoActual.position, this.transform.position);
+        float dist = Vector3.Distance(objetivoActual.position, transform.position);
         if (dist < distanciaWaypoint)
         {
             if (estado == EstadoNPC.Patrolling)
@@ -128,115 +127,6 @@ public class MovimientoFantasmas : MonoBehaviour
         }
     }
 
-    //Busca el nodo mas cercano al fantasma
-    void encontrarNodoCercano() 
-    {
-        bool encontrado = false;
-        float minDistance = float.MaxValue;
-        Transform currentNode = null;
-        
-        while (!encontrado) 
-        {
-            Collider[] waypoints = Physics.OverlapSphere(transform.position, sphereRadious, LayerMask.GetMask("Waypoints"));
-            foreach( Collider waypoint in waypoints)
-            {
-                float distance = Vector3.Distance(waypoint.transform.position, transform.position);
-                if (waypoint != null &&  distance < minDistance)
-                {
-                    minDistance = distance;
-                    currentNode = waypoint.transform;
-                }
-            }
-
-            if (currentNode == null)
-                sphereRadious++;
-            else
-            {
-                encontrado = true;
-                sphereRadious = 1f;
-            }
-        }
-
-        nearestNode = currentNode;
-    }
-
-    void obtenerCamino(Nodo target, Nodo start, int[] nodesList)
-    {
-        //Creamos el nodo inicial del pathfinding
-        Nodo nodoActual = target;
-        nodoActual.costSoFar = 0;
-        float distanceToGhost = Vector3.Distance(nodoActual.transform.position, transform.position);
-        nodoActual.estimatedTotalCost = nodoActual.costSoFar + distanceToGhost;
-
-
-        //Creamos las listas abierta y cerrada
-        priorityQueue openedQueue = new priorityQueue();
-        priorityQueue closedQueue = new priorityQueue();
-
-        openedQueue.Insertar(nodoActual, nodoActual.estimatedTotalCost);
-
-        while (openedQueue.getLegth() > 0)
-        {
-            nodoActual = openedQueue.Devolver();
-            Debug.Log("Nodo actual: " + nodoActual.transform.name);
-
-            if (nodoActual == start)
-                break;
-
-            for (int i = 0; i < nodoActual.arcs.Count; i++)
-            {
-                Nodo nextNode = nodoActual.arcs[i].GetComponent<Nodo>();
-                float distanceToNextNode = nodoActual.costSoFar + nodoActual.weigths[i];
-
-                if (closedQueue.EncontrarNodo(nextNode))
-                {
-                    Nodo nodoAuxiliar = closedQueue.ConsultarNodo(nextNode);
-                    if (nodoAuxiliar != null && nodoAuxiliar.costSoFar <= distanceToNextNode)
-                        continue;
-
-                    closedQueue.EliminarNodo(nodoAuxiliar);
-                    distanceToGhost = nodoAuxiliar.estimatedTotalCost - nodoActual.costSoFar;
-                }
-                else if (openedQueue.EncontrarNodo(nextNode))
-                {
-                    Nodo nodoAuxiliar = openedQueue.ConsultarNodo(nextNode);
-                    if (nodoAuxiliar != null && nodoAuxiliar.costSoFar <= distanceToNextNode)
-                        continue;
-
-                    distanceToGhost = nodoAuxiliar.estimatedTotalCost - nodoAuxiliar.costSoFar;
-                }
-                else
-                {
-                    distanceToGhost = Vector3.Distance(transform.position, nextNode.transform.position);
-                }
-
-                nextNode.costSoFar = distanceToNextNode;
-                nextNode.estimatedTotalCost = distanceToNextNode + distanceToGhost;
-                nextNode.father = nodoActual;
-
-                if (!openedQueue.EncontrarNodo(nextNode) && !closedQueue.EncontrarNodo(nextNode))
-                    openedQueue.Insertar(nextNode, nextNode.estimatedTotalCost);
-                else
-                    openedQueue.CambiarPrio(nextNode, nextNode.estimatedTotalCost);
-
-            }
-            closedQueue.Insertar(nodoActual, nodoActual.estimatedTotalCost);
-        }
-
-        if (nodoActual.transform == start.transform)
-        {
-            while(nodoActual != target)
-            {
-                Debug.Log("x Nodo Actual: " + nodoActual.name);
-                Debug.Log("x Padre: " + nodoActual.father.name);
-                nodesList[nodoActual.getId()] = nodoActual.father.getId();
-                Nodo aux = nodoActual.father;
-                nodoActual.father = null;
-                nodoActual = aux;
-            }
-        }
-    }
-
     public void cambiarEstadoFantasma(int newEstado)
     {
         estado = newEstado;
@@ -260,7 +150,7 @@ public class MovimientoFantasmas : MonoBehaviour
             if(npc.tag == "fantasma")
             {
                 MovimientoFantasmas fantasma = npc.GetComponent<MovimientoFantasmas>();
-                if(fantasma.consultaEstadoFantasma() != EstadoNPC.Alerted && fantasma.consultaEstadoFantasma() != EstadoNPC.GoingHome)
+                if(fantasma.consultaEstadoFantasma() != EstadoNPC.Alerted && fantasma.consultaEstadoFantasma() != EstadoNPC.GoingHome && fantasma.consultaEstadoFantasma() != EstadoNPC.Waiting)
                     fantasma.AvisoDeFantasma();
             }
         }

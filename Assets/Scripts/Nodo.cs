@@ -29,7 +29,7 @@ public class Nodo : MonoBehaviour
             float angle = (Mathf.PI / 2 * i) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.up);
 
-            if (Physics.Raycast(transform.position, transform.TransformDirection(new Vector3(0, 0, 1)), out ray, 100.0f) && ray.transform.tag == "Waypoint")
+            if (Physics.Raycast(transform.position, transform.TransformDirection(new Vector3(0, 0, 1)), out ray, 100.0f, LayerMask.GetMask("Waypoints")) && ray.transform.tag == "Waypoint")
             {
                 arcs.Add(ray.transform.gameObject);
                 weigths.Add(Vector3.Distance(transform.position, ray.transform.position));
