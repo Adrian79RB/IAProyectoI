@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 6199127110365035078}
   - component: {fileID: 3859007383644178366}
   - component: {fileID: 1667998709261404206}
+  - component: {fileID: 5967808792246143549}
   m_Layer: 0
   m_Name: Gargoyle
   m_TagString: Untagged
@@ -166,6 +167,23 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &5967808792246143549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8038108750564668487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8537858629e237748a80c0a8dda73725, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flexibilidad: 0
+  timeCounter: 0
+  etapa: 0
+  ida: 1
+  gargola: {fileID: 6199127110365035078}
 --- !u!1001 &3426523637537600564
 PrefabInstance:
   m_ObjectHideFlags: 0
