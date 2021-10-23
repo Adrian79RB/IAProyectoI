@@ -11,23 +11,38 @@ public class MovimientoFantasmas : MonoBehaviour
     public Transform homePoint;
     public Transform nearestNode;
 
+    //Velocidades de moviemiento
     float velocidadPatrol = 2f;
     float velocidadMovimiento = 5f;
+    float velocidadActual = 0.0f;
+    
+    //Velocidad de rotacioon
     float velocidadRotacion = 0.15f;
+    
+    //Valores varios
     float distanciaWaypoint = 0.5f;
     float sphereRadious = 1f;
     float ghostCallRadious = 25f;
     [SerializeField]int estado; //Patrolling: Haciendo su patrulla; Alerted: Jugador es detectado; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca lugar patrulla; GoingPatrol: Va hasta la zona patrulla
 
+    //Steering Behaviour
+    Vector3 initialPoint;
+    Vector3 endPoint;
+    float pathRadious = 10;
+
+    //Path Finding
     Transform WaypointFather;
     Transform objetivoActual;
+    Rigidbody rgbd;
     int[] pathWaypoints;
     int[] patrolWaypoints;
 
     void Start()
     {
+        rgbd = GetComponent<Rigidbody>();
         WaypointFather = GameObject.Find("PadreWaypoints").transform;
         objetivoActual = patrolStart;
+        initialPoint = objetivoActual.position;
         pathWaypoints = new int[WaypointFather.childCount];
         patrolWaypoints = new int[WaypointFather.childCount];
         estado = EstadoNPC.Patrolling;
@@ -37,19 +52,24 @@ public class MovimientoFantasmas : MonoBehaviour
     void Update()
     {
         Movimiento();
+        Follow();
         ControlDeEstados();
         ComprobarWaypoint();
     }
 
     void Movimiento(){
+        //Vector3 direccion = (objetivo - this.transform.position).normalized;
         Vector3 direccion = (objetivoActual.position - this.transform.position).normalized;
         Quaternion rotacion = Quaternion.LookRotation(direccion, transform.up);
-        transform.rotation = Quaternion.Lerp(this.transform.rotation, rotacion, velocidadRotacion);
+        rgbd.MoveRotation(Quaternion.Lerp(this.transform.rotation, rotacion, velocidadRotacion));
 
-        if(estado == EstadoNPC.Patrolling)
-            this.transform.position = this.transform.position + direccion * velocidadPatrol * Time.deltaTime;
+        if (estado == EstadoNPC.Patrolling)
+            velocidadActual = velocidadPatrol;
         else
-            this.transform.position = this.transform.position + direccion * velocidadMovimiento * Time.deltaTime;
+            velocidadActual = velocidadMovimiento;
+
+        rgbd.MovePosition(this.transform.position + direccion * velocidadActual * Time.deltaTime);
+
     }
 
     void ControlDeEstados()
@@ -91,6 +111,8 @@ public class MovimientoFantasmas : MonoBehaviour
         float dist = Vector3.Distance(objetivoActual.position, transform.position);
         if (dist < distanciaWaypoint)
         {
+            initialPoint = objetivoActual.position;
+
             if (estado == EstadoNPC.Patrolling)
             {
                 int id = objetivoActual.GetComponent<Nodo>().getId();
@@ -124,9 +146,45 @@ public class MovimientoFantasmas : MonoBehaviour
             {
                 objetivoActual = transform;
             }
+
+            endPoint = objetivoActual.position;
         }
     }
+    // ---------------------
+    //Steering Behaviour
+    //----------------------
+    void Seek(Vector3 target)
+    {
+        Vector3 deseado = target - transform.position;
+        deseado = deseado.normalized * velocidadActual;
+        Vector3 steer = deseado - rgbd.velocity;
+        rgbd.AddForce(steer, ForceMode.Acceleration);
+    }
 
+    void Follow()
+    {
+        Debug.Log("Initial Pos: " + initialPoint + "; End Pos: " + endPoint);
+        Vector3 prediccion = rgbd.velocity;
+        prediccion = transform.position + prediccion.normalized * 50;
+        //Vector3 predicPos = transform.position + prediccion;
+
+        Vector3 puntoNormal = PathfindingClass.getNormalPoint(initialPoint, endPoint, prediccion);
+        Vector3 dir = endPoint - initialPoint;
+        dir = dir.normalized * rgbd.velocity.magnitude;
+        Vector3 target = puntoNormal + dir;
+
+        float distanceToPath = Vector3.Distance(puntoNormal, prediccion);
+        if (distanceToPath > pathRadious)
+        {
+            Seek(target);
+            //Movimiento(target);
+        }
+
+    }
+
+    //----------------------
+    // Control de estado
+    //----------------------
     public void cambiarEstadoFantasma(int newEstado)
     {
         estado = newEstado;
