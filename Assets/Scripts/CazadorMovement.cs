@@ -13,6 +13,9 @@ public class CazadorMovement : MonoBehaviour
     float velocidadCaza = 5.0f;
     float velocidadRotacion = 0.1f;
     float distanciaWaypoint = 0.5f;
+    float sphereRadious = 1.0f;
+    float cazadorCallRadius = 15.0f;
+
 
     [SerializeField]int estado; //Alerted: Jugador coge monedas; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca al jugador; GoingPatrol: Persigue al jugador
 
@@ -124,9 +127,31 @@ public class CazadorMovement : MonoBehaviour
         estado = nuevoEstado;
     }
 
+    public int consultaEstadoCazador()
+    {
+        return estado;
+    }
+
     //--------------------------------------
-    //Comunicación entre NPCs
+    //Comunicaciï¿½n entre NPCs
     //--------------------------------------
+
+
+
+    void LanzarAvisoCazador()
+    {
+        Collider[] npcs = Physics.OverlapSphere(transform.position, cazadorCallRadius);
+
+        foreach( Collider npc in npcs)
+        {
+            if(npc.tag == "cazador")
+            {
+                CazadorMovement cazador = npc.GetComponent<CazadorMovement>();
+                if(cazador.consultaEstadoCazador() != EstadoNPC.Alerted && cazador.consultaEstadoCazador() != EstadoNPC.GoingHome && cazador.consultaEstadoCazador() != EstadoNPC.Waiting)
+                    cazador.AvisoDeFantasma();
+            }
+        }
+    }
 
     void AvisarFantasma(GameObject fantasma)
     {

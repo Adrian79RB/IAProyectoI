@@ -17,6 +17,7 @@ public class MovimientoFantasmas : MonoBehaviour
     float distanciaWaypoint = 0.5f;
     float sphereRadious = 1f;
     float ghostCallRadious = 25f;
+    
     [SerializeField]int estado; //Patrolling: Haciendo su patrulla; Alerted: Jugador es detectado; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca lugar patrulla; GoingPatrol: Va hasta la zona patrulla
 
     Transform WaypointFather;
@@ -138,7 +139,7 @@ public class MovimientoFantasmas : MonoBehaviour
     }
 
     //------------------------------------
-    //Comunicación entre NPCs
+    //Comunicaciï¿½n entre NPCs
     //------------------------------------
 
     void LanzarAvisoFantasma()
