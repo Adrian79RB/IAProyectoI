@@ -15,8 +15,9 @@ public class MovimientoFantasmas : MonoBehaviour
     float velocidadMovimiento = 5f;
     float velocidadRotacion = 0.15f;
     float distanciaWaypoint = 0.5f;
-    float sphereRadious = 1f;
     float ghostCallRadious = 25f;
+    float cazadorCallRadious = 3.0f;
+    
     [SerializeField]int estado; //Patrolling: Haciendo su patrulla; Alerted: Jugador es detectado; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca lugar patrulla; GoingPatrol: Va hasta la zona patrulla
 
     Transform WaypointFather;
@@ -42,14 +43,17 @@ public class MovimientoFantasmas : MonoBehaviour
     }
 
     void Movimiento(){
-        Vector3 direccion = (objetivoActual.position - this.transform.position).normalized;
-        Quaternion rotacion = Quaternion.LookRotation(direccion, transform.up);
-        transform.rotation = Quaternion.Lerp(this.transform.rotation, rotacion, velocidadRotacion);
+        if(objetivoActual != transform)
+        {
+            Vector3 direccion = (objetivoActual.position - this.transform.position).normalized;
+            Quaternion rotacion = Quaternion.LookRotation(direccion, transform.up);
+            transform.rotation = Quaternion.Lerp(this.transform.rotation, rotacion, velocidadRotacion);
 
-        if(estado == EstadoNPC.Patrolling)
-            this.transform.position = this.transform.position + direccion * velocidadPatrol * Time.deltaTime;
-        else
-            this.transform.position = this.transform.position + direccion * velocidadMovimiento * Time.deltaTime;
+            if (estado == EstadoNPC.Patrolling)
+                this.transform.position = this.transform.position + direccion * velocidadPatrol * Time.deltaTime;
+            else
+                this.transform.position = this.transform.position + direccion * velocidadMovimiento * Time.deltaTime;
+        }
     }
 
     void ControlDeEstados()
@@ -77,12 +81,15 @@ public class MovimientoFantasmas : MonoBehaviour
         else if (estado == EstadoNPC.GoingHome)
         {
             LanzarAvisoFantasma();
+            LanzarAvisoCazador();
         }
         else if (estado == EstadoNPC.SearchingPatrol)
         {
-            PathfindingClass.obtenerCamino(transform, nearestNode.GetComponent<Nodo>(), homePoint.GetComponent<Nodo>(), ref pathWaypoints);
+            nearestNode = PathfindingClass.encontrarNodoCercano(transform);
+
+            PathfindingClass.obtenerCamino(transform, patrolStart.GetComponent<Nodo>(), nearestNode.GetComponent<Nodo>(), ref pathWaypoints);
             cambiarEstadoFantasma(EstadoNPC.GoingPatrol);
-            objetivoActual = homePoint;
+            objetivoActual = nearestNode;
         }
     }
 
@@ -110,7 +117,7 @@ public class MovimientoFantasmas : MonoBehaviour
             }
             else if (estado == EstadoNPC.GoingPatrol)
             {
-                if (objetivoActual != nearestNode)
+                if (objetivoActual != patrolStart)
                 {
                     int id = objetivoActual.GetComponent<Nodo>().getId();
                     objetivoActual = WaypointFather.GetChild(pathWaypoints[id]);
@@ -138,7 +145,7 @@ public class MovimientoFantasmas : MonoBehaviour
     }
 
     //------------------------------------
-    //Comunicación entre NPCs
+    //Comunicaciï¿½n entre NPCs
     //------------------------------------
 
     void LanzarAvisoFantasma()
@@ -150,15 +157,25 @@ public class MovimientoFantasmas : MonoBehaviour
             if(npc.tag == "fantasma")
             {
                 MovimientoFantasmas fantasma = npc.GetComponent<MovimientoFantasmas>();
-                if(fantasma.consultaEstadoFantasma() != EstadoNPC.Alerted && fantasma.consultaEstadoFantasma() != EstadoNPC.GoingHome && fantasma.consultaEstadoFantasma() != EstadoNPC.Waiting)
+                if(fantasma.consultaEstadoFantasma() == EstadoNPC.GoingPatrol || fantasma.consultaEstadoFantasma() == EstadoNPC.Patrolling || fantasma.consultaEstadoFantasma() == EstadoNPC.SearchingPatrol)
                     fantasma.AvisoDeFantasma();
             }
         }
     }
 
-    void AvisarCazador(GameObject cazador){
-       // Movimiento(objetivoActual = cazador);
-       cazador.GetComponent<CazadorMovement>().AvisoDeFantasma();
+    void LanzarAvisoCazador()
+    {
+        Collider[] npcs = Physics.OverlapSphere(transform.position, cazadorCallRadious);
+
+        foreach( Collider npc in npcs)
+        {
+            if(npc.tag == "cazador")
+            {
+                CazadorMovement cazador = npc.GetComponent<CazadorMovement>();
+                if(cazador.consultaEstadoCazador() == EstadoNPC.Waiting)
+                    cazador.AvisoDeFantasma();
+            }
+        }
     }
 
     public void AvisoDeGargola(){
@@ -170,6 +187,11 @@ public class MovimientoFantasmas : MonoBehaviour
     }
 
     public void AvisoDeCazador()
+    {
+        cambiarEstadoFantasma(EstadoNPC.SearchingPatrol);
+    }
+
+    public void AvisoDeMonedas()
     {
         cambiarEstadoFantasma(EstadoNPC.SearchingPatrol);
     }
