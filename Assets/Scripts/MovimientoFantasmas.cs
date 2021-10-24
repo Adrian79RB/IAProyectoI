@@ -85,6 +85,9 @@ public class MovimientoFantasmas : MonoBehaviour
             cambiarEstadoFantasma(EstadoNPC.GoingPatrol);
             objetivoActual = homePoint;
         }
+        else {
+            LanzarAvisoCazador();
+        }
     }
 
     void ComprobarWaypoint()
@@ -157,9 +160,19 @@ public class MovimientoFantasmas : MonoBehaviour
         }
     }
 
-    void AvisarCazador(GameObject cazador){
-       // Movimiento(objetivoActual = cazador);
-       cazador.GetComponent<CazadorMovement>().AvisoDeFantasma();
+    void LanzarAvisoCazador()
+    {
+        Collider[] npcs = Physics.OverlapSphere(transform.position, cazadorCallRadius);
+
+        foreach( Collider npc in npcs)
+        {
+            if(npc.tag == "cazador")
+            {
+                CazadorMovement cazador = npc.GetComponent<CazadorMovement>();
+                if(cazador.consultaEstadoCazador() == EstadoNPC.Waiting)
+                    cazador.AvisoDeFantasma();
+            }
+        }
     }
 
     public void AvisoDeGargola(){

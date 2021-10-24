@@ -46,8 +46,23 @@ public class GargoilObserver : MonoBehaviour
                 if (raycastHit.collider.transform == player)
                 {
                     parent.LookAt(player);
+                    LanzarAvisoFantasmas();
                     //gameEnding.CaughtPlayer ();
                 }
+            }
+        }
+    }
+
+    void LanzarAvisoFantasmas(){
+        Collider[] npcs = Physics.OverlapSphere(transform.position, ghostCallRadious);
+
+        foreach( Collider npc in npcs)
+        {
+            if(npc.tag == "fantasma")
+            {
+                MovimientoFantasmas fantasma = npc.GetComponent<MovimientoFantasmas>();
+                if(fantasma.consultaEstadoFantasma() != EstadoNPC.Alerted && fantasma.consultaEstadoFantasma() != EstadoNPC.GoingHome && fantasma.consultaEstadoFantasma() != EstadoNPC.Waiting)
+                    fantasma.AvisoDeGargola();
             }
         }
     }

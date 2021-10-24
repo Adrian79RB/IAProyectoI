@@ -84,6 +84,9 @@ public class CazadorMovement : MonoBehaviour
                 }
             }
         }
+        else {
+            LanzarAvisoCazador();
+        }
     }
 
     void ComprobarWaypoints()
@@ -147,8 +150,8 @@ public class CazadorMovement : MonoBehaviour
             if(npc.tag == "cazador")
             {
                 CazadorMovement cazador = npc.GetComponent<CazadorMovement>();
-                if(cazador.consultaEstadoCazador() != EstadoNPC.Alerted && cazador.consultaEstadoCazador() != EstadoNPC.GoingHome && cazador.consultaEstadoCazador() != EstadoNPC.Waiting)
-                    cazador.AvisoDeFantasma();
+                if(fantasma.consultaEstadoFantasma == EstadoNPC.Waiting)
+                    fantasma.AvisoDeCazador();
             }
         }
     }
