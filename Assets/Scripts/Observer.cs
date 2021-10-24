@@ -45,8 +45,9 @@ public class Observer : MonoBehaviour
             //si confirma que está en el campo de visión hace cosas
             if (Physics.Raycast (ray, out raycastHit))
             {
-                if (raycastHit.collider.transform == player)
+                if (raycastHit.collider.transform == player && (ghost.consultaEstadoFantasma() == EstadoNPC.Patrolling || ghost.consultaEstadoFantasma() == EstadoNPC.GoingPatrol) )
                 {
+                    Debug.Log("Esta pillando a player.");
                     ghost.AvisoDeFantasma();
                 }
             }
