@@ -13,8 +13,7 @@ public class CazadorMovement : MonoBehaviour
     float velocidadCaza = 5.0f;
     float velocidadRotacion = 0.1f;
     float distanciaWaypoint = 0.5f;
-    float sphereRadious = 1.0f;
-    float cazadorCallRadius = 15.0f;
+    float cazadorCallRadius = 4.0f;
 
 
     [SerializeField]int estado; //Alerted: Jugador coge monedas; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca al jugador; GoingPatrol: Persigue al jugador
@@ -40,18 +39,20 @@ public class CazadorMovement : MonoBehaviour
 
     void Movimiento()
     {
-        Vector3 direction = (objetivoActual.position - transform.position).normalized;
-        Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, velocidadRotacion);
-        transform.position += direction * velocidadCaza * Time.deltaTime;
+        if(objetivoActual != transform) 
+        {
+            Vector3 direction = (objetivoActual.position - transform.position).normalized;
+            Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, velocidadRotacion);
+            transform.position += direction * velocidadCaza * Time.deltaTime;
+        }
     }
 
     private void ControlDeEstados()
     {
         if (estado == EstadoNPC.Alerted)
         {
-            if (nearestNode == null)
-                nearestNode = PathfindingClass.encontrarNodoCercano(transform);
+            nearestNode = PathfindingClass.encontrarNodoCercano(transform);
 
             PathfindingClass.obtenerCamino(transform, homePoint.GetComponent<Nodo>(), nearestNode.GetComponent<Nodo>(), ref pathWaypoints);
             cambiarEstadoCazador(EstadoNPC.GoingHome);
@@ -84,8 +85,8 @@ public class CazadorMovement : MonoBehaviour
                 }
             }
         }
-        else {
-            LanzarAvisoCazador();
+        else if (estado == EstadoNPC.GoingHome){
+            LanzarAvisoFantasma();
         }
     }
 
@@ -108,8 +109,9 @@ public class CazadorMovement : MonoBehaviour
             }
             else if(estado == EstadoNPC.GoingPatrol)
             {
-                if(objetivoActual != nearestNode)
+                if(objetivoActual != nearestNode && objetivoActual != player)
                 {
+                    Debug.Log("Cazador: Soy: " + transform.name + "; objetivo actual: " + objetivoActual.name + "; estado: " + estado);
                     int id = objetivoActual.GetComponent<Nodo>().getId();
                     objetivoActual = WaypointFather.GetChild(pathWaypoints[id]);
                 }
@@ -141,24 +143,19 @@ public class CazadorMovement : MonoBehaviour
 
 
 
-    void LanzarAvisoCazador()
+    void LanzarAvisoFantasma()
     {
         Collider[] npcs = Physics.OverlapSphere(transform.position, cazadorCallRadius);
 
         foreach( Collider npc in npcs)
         {
-            if(npc.tag == "cazador")
+            if(npc.tag == "fantasma")
             {
-                CazadorMovement cazador = npc.GetComponent<CazadorMovement>();
-                if(fantasma.consultaEstadoFantasma == EstadoNPC.Waiting)
+                MovimientoFantasmas fantasma = npc.GetComponent<MovimientoFantasmas>();
+                if(fantasma.consultaEstadoFantasma() == EstadoNPC.Waiting)
                     fantasma.AvisoDeCazador();
             }
         }
-    }
-
-    void AvisarFantasma(GameObject fantasma)
-    {
-        fantasma.GetComponent<MovimientoFantasmas>().AvisoDeCazador();
     }
 
     public void AvisoDeFantasma(){

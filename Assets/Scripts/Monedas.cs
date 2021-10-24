@@ -8,11 +8,13 @@ public class Monedas : MonoBehaviour
     [SerializeField]
     private ActivarSalida activarSalida;
     private GameObject cazadorPadre;
+    private GameObject fantasmaPadre;
 
     void Start()
     {
         activarSalida = FindObjectOfType<ActivarSalida>();
         cazadorPadre = GameObject.Find("Cazadores");
+        fantasmaPadre = GameObject.Find("Fantasmas");
     }
 
 
@@ -35,11 +37,20 @@ public class Monedas : MonoBehaviour
     }
 
     void LanzarAvisoMonedas(){
-        if (cazadorPadre.transform.GetChild(0).GetComponent<CazadorMovement>().consultaEstadoCazador() == EstadoNPC.Alerted)
+        if (cazadorPadre.transform.GetChild(0).GetComponent<CazadorMovement>().consultaEstadoCazador() == EstadoNPC.GoingPatrol)
         {
-            for(int i = 0; i < cazadorPadre.childCount; i++){
-                cazadorPadre.transform.GetChild(0).GetComponent<CazadorMovement>().AvisoDeMonedas();
+            Debug.Log("Desactivando Busqueda");
+
+            for (int i = 0; i < cazadorPadre.transform.childCount; i++)
+            {
+                cazadorPadre.transform.GetChild(i).GetComponent<CazadorMovement>().AvisoDeMonedas();
+                Debug.Log("Monedas: Soy: " + cazadorPadre.transform.GetChild(i).name + "; estado: " + cazadorPadre.transform.GetChild(i).GetComponent<CazadorMovement>().consultaEstadoCazador());
             }
+        }
+
+        for (int i = 0; i < fantasmaPadre.transform.childCount; i++)
+        {
+            fantasmaPadre.transform.GetChild(i).GetComponent<MovimientoFantasmas>().AvisoDeMonedas();
         }
     }
 }

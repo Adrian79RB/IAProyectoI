@@ -57,7 +57,6 @@ public static class PathfindingClass
         while (openedQueue.getLegth() > 0)
         {
             nodoActual = openedQueue.Devolver();
-            Debug.Log("Nodo actual: " + nodoActual.transform.name);
 
             if (nodoActual == start)
                 break;
@@ -106,8 +105,6 @@ public static class PathfindingClass
         {
             while (nodoActual != target)
             {
-                Debug.Log("x Nodo Actual: " + nodoActual.name);
-                Debug.Log("x Padre: " + nodoActual.father.name);
                 nodesList[nodoActual.getId()] = nodoActual.father.getId();
                 Nodo aux = nodoActual.father;
                 //nodoActual.father = null;

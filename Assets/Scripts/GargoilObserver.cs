@@ -9,6 +9,7 @@ public class GargoilObserver : MonoBehaviour
     public GameEnding gameEnding;
     private Quaternion basePosition;
     bool m_IsPlayerInRange;
+    float gargoilCallRadious = 20f;
 
     //cuando algo entra en su campo de visión comprueba si se trata del jugador
     void Start(){
@@ -47,6 +48,7 @@ public class GargoilObserver : MonoBehaviour
                 {
                     parent.LookAt(player);
                     LanzarAvisoFantasmas();
+                    LanzarAvisoCazadores();
                     //gameEnding.CaughtPlayer ();
                 }
             }
@@ -54,7 +56,7 @@ public class GargoilObserver : MonoBehaviour
     }
 
     void LanzarAvisoFantasmas(){
-        Collider[] npcs = Physics.OverlapSphere(transform.position, ghostCallRadious);
+        Collider[] npcs = Physics.OverlapSphere(transform.position, gargoilCallRadious);
 
         foreach( Collider npc in npcs)
         {
@@ -63,6 +65,21 @@ public class GargoilObserver : MonoBehaviour
                 MovimientoFantasmas fantasma = npc.GetComponent<MovimientoFantasmas>();
                 if(fantasma.consultaEstadoFantasma() != EstadoNPC.Alerted && fantasma.consultaEstadoFantasma() != EstadoNPC.GoingHome && fantasma.consultaEstadoFantasma() != EstadoNPC.Waiting)
                     fantasma.AvisoDeGargola();
+            }
+        }
+    }
+
+    void LanzarAvisoCazadores()
+    {
+        Collider[] npcs = Physics.OverlapSphere(transform.position, gargoilCallRadious);
+
+        foreach (Collider npc in npcs)
+        {
+            if (npc.tag == "cazador")
+            {
+                CazadorMovement cazador = npc.GetComponent<CazadorMovement>();
+                if (cazador.consultaEstadoCazador() == EstadoNPC.GoingHome)
+                    cazador.AvisoDeGargola();
             }
         }
     }
