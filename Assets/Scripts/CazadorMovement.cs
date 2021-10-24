@@ -37,10 +37,13 @@ public class CazadorMovement : MonoBehaviour
 
     void Movimiento()
     {
-        Vector3 direction = (objetivoActual.position - transform.position).normalized;
-        Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, velocidadRotacion);
-        transform.position += direction * velocidadCaza * Time.deltaTime;
+        if(objetivoActual != transform)
+        {
+            Vector3 direction = (objetivoActual.position - transform.position).normalized;
+            Quaternion rotation = Quaternion.LookRotation(direction, transform.up);
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, velocidadRotacion);
+            transform.position += direction * velocidadCaza * Time.deltaTime;
+        }
     }
 
     private void ControlDeEstados()

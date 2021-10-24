@@ -58,18 +58,20 @@ public class MovimientoFantasmas : MonoBehaviour
     }
 
     void Movimiento(){
-        //Vector3 direccion = (objetivo - this.transform.position).normalized;
-        Vector3 direccion = (objetivoActual.position - this.transform.position).normalized;
-        Quaternion rotacion = Quaternion.LookRotation(direccion, transform.up);
-        rgbd.MoveRotation(Quaternion.Lerp(this.transform.rotation, rotacion, velocidadRotacion));
+        if(objetivoActual != transform)
+        {
+            //Vector3 direccion = (objetivo - this.transform.position).normalized;
+            Vector3 direccion = (objetivoActual.position - this.transform.position).normalized;
+            Quaternion rotacion = Quaternion.LookRotation(direccion, transform.up);
+            rgbd.MoveRotation(Quaternion.Lerp(this.transform.rotation, rotacion, velocidadRotacion));
 
-        if (estado == EstadoNPC.Patrolling)
-            velocidadActual = velocidadPatrol;
-        else
-            velocidadActual = velocidadMovimiento;
+            if (estado == EstadoNPC.Patrolling)
+                velocidadActual = velocidadPatrol;
+            else
+                velocidadActual = velocidadMovimiento;
 
-        rgbd.MovePosition(this.transform.position + direccion * velocidadActual * Time.deltaTime);
-
+            rgbd.MovePosition(this.transform.position + direccion * velocidadActual * Time.deltaTime);
+        }
     }
 
     void ControlDeEstados()
@@ -163,7 +165,6 @@ public class MovimientoFantasmas : MonoBehaviour
 
     void Follow()
     {
-        Debug.Log("Initial Pos: " + initialPoint + "; End Pos: " + endPoint);
         Vector3 prediccion = rgbd.velocity;
         prediccion = transform.position + prediccion.normalized * 50;
         //Vector3 predicPos = transform.position + prediccion;
