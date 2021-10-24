@@ -105,14 +105,4 @@ public class GargoilRotation : MonoBehaviour
                     break;
             }
     }
-
-    void OnTriggerEnter(Collider col){
-         if (col.gameObject.tag == "fantasma"){
-             AvisarFantasma(col.gameObject);
-         }
-    }
-
-    void AvisarFantasma(GameObject fantasma){
-       fantasma.GetComponent<MovimientoFantasmas>().AvisoDeGargola();
-    }
 }

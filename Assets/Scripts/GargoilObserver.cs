@@ -7,9 +7,13 @@ public class GargoilObserver : MonoBehaviour
     public Transform player;
     public Transform parent;
     public GameEnding gameEnding;
+
     private Quaternion basePosition;
     bool m_IsPlayerInRange;
-    float gargoilCallRadious = 20f;
+    bool estaAvisando = false;
+    float timerAvisando = 0.0f;
+    float timeAviso = 3.0f;
+    float gargoilCallRadious = 25f;
 
     //cuando algo entra en su campo de visión comprueba si se trata del jugador
     void Start(){
@@ -28,6 +32,8 @@ public class GargoilObserver : MonoBehaviour
         if (other.transform == player)
         {
             m_IsPlayerInRange = false;
+            estaAvisando = false;
+            timerAvisando = 0.0f;
             parent.rotation=basePosition;
         }
     }
@@ -46,6 +52,7 @@ public class GargoilObserver : MonoBehaviour
             {
                 if (raycastHit.collider.transform == player)
                 {
+                    Debug.Log("player visto");
                     parent.LookAt(player);
                     LanzarAvisoFantasmas();
                     LanzarAvisoCazadores();
@@ -53,18 +60,34 @@ public class GargoilObserver : MonoBehaviour
                 }
             }
         }
+
+        if (estaAvisando)
+        {
+            timerAvisando += Time.deltaTime;
+            if(timerAvisando >= timeAviso)
+            {
+                timerAvisando = 0.0f;
+                estaAvisando = false;
+            }
+        }
     }
 
     void LanzarAvisoFantasmas(){
+        estaAvisando = true;
         Collider[] npcs = Physics.OverlapSphere(transform.position, gargoilCallRadious);
-
+        Debug.Log("Lanzando aviso");
         foreach( Collider npc in npcs)
         {
             if(npc.tag == "fantasma")
             {
+                Debug.Log("Avisando fantasma");
                 MovimientoFantasmas fantasma = npc.GetComponent<MovimientoFantasmas>();
-                if(fantasma.consultaEstadoFantasma() != EstadoNPC.Alerted && fantasma.consultaEstadoFantasma() != EstadoNPC.GoingHome && fantasma.consultaEstadoFantasma() != EstadoNPC.Waiting)
+                if(fantasma.consultaEstadoFantasma() == EstadoNPC.GoingPatrol || fantasma.consultaEstadoFantasma() == EstadoNPC.Patrolling || fantasma.consultaEstadoFantasma() == EstadoNPC.SearchingPatrol)
                     fantasma.AvisoDeGargola();
+            }
+            else if (npc.tag == "gargola" && !npc.GetComponentInChildren<GargoilObserver>().EstaAvisando())
+            {
+                npc.GetComponentInChildren<GargoilObserver>().AvisoDeGargola();
             }
         }
     }
@@ -82,6 +105,17 @@ public class GargoilObserver : MonoBehaviour
                     cazador.AvisoDeGargola();
             }
         }
+    }
+
+    void AvisoDeGargola()
+    {
+        LanzarAvisoFantasmas();
+        LanzarAvisoCazadores();
+    }
+
+    public bool EstaAvisando()
+    {
+        return estaAvisando;
     }
 }
 
