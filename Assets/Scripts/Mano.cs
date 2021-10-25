@@ -6,22 +6,10 @@ public class Mano : MonoBehaviour
 {
     public GameEnding cazado;
     public Transform jugador;
-<<<<<<< Updated upstream
-    public PlayerMovement ef;
-
-    public Animator animator;
-    public float temporizador = 5;
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-=======
     public Animator animator;
     public float temporizador = 5;
 
     [SerializeField]bool handActive = false;
->>>>>>> Stashed changes
 
     // Update is called once per frame
     void Update()

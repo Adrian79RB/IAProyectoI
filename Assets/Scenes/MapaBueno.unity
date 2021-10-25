@@ -83925,7 +83925,6 @@ PrefabInstance:
       objectReference: {fileID: 24480224}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01348926c7cbb3347a006c37204131c3, type: 3}
-<<<<<<< Updated upstream
 --- !u!1001 &1662104092
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -84049,8 +84048,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1662104092}
   m_PrefabAsset: {fileID: 0}
-=======
->>>>>>> Stashed changes
 --- !u!1001 &1663520950
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -105315,11 +105312,8 @@ Animator:
     type: 3}
   m_PrefabInstance: {fileID: 1833916407}
   m_PrefabAsset: {fileID: 0}
-<<<<<<< Updated upstream
 --- !u!65 &2097342267
-=======
 --- !u!65 &2097342268
->>>>>>> Stashed changes
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -105328,7 +105322,6 @@ BoxCollider:
   m_GameObject: {fileID: 2097342264}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-<<<<<<< Updated upstream
   m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 4.354492, y: 1, z: 4}
@@ -105347,12 +105340,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 514868440}
   end: {fileID: 1574526628}
-=======
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 3, y: 2, z: 1}
   m_Center: {x: 0, y: 0, z: -3.5}
->>>>>>> Stashed changes
 --- !u!4 &2098111472 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4398672163102086471, guid: 6dccd6ba3874ac14383aa1fc1658e13f,
