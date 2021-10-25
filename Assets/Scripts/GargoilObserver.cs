@@ -32,8 +32,6 @@ public class GargoilObserver : MonoBehaviour
         if (other.transform == player)
         {
             m_IsPlayerInRange = false;
-            estaAvisando = false;
-            timerAvisando = 0.0f;
             parent.rotation=basePosition;
         }
     }

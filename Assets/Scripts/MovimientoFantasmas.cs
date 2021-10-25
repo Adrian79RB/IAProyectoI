@@ -22,7 +22,7 @@ public class MovimientoFantasmas : MonoBehaviour
     //Valores varios
     float distanciaWaypoint = 1.5f;
     float ghostCallRadious = 25f;
-    float cazadorCallRadious = 3.0f;
+    float cazadorCallRadious = 3.5f;
     
     [SerializeField]int estado; //Patrolling: Haciendo su patrulla; Alerted: Jugador es detectado; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca lugar patrulla; GoingPatrol: Va hasta la zona patrulla
 

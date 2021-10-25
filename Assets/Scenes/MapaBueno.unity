@@ -1894,6 +1894,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contadorMonedas: 0
   Salida: {fileID: 1574526626}
+  marcador: {fileID: 253688235}
+  textChange: 0
 --- !u!4 &24480225
 Transform:
   m_ObjectHideFlags: 0
@@ -13450,6 +13452,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7659890574172713875, guid: c013316754088b1449bccb219da41401,
     type: 3}
   m_PrefabInstance: {fileID: 253576880}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &253688235 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2204012484628536852, guid: 25a9b51216ac79a4d8058aa58c2d6889,
+    type: 3}
+  m_PrefabInstance: {fileID: 892868216}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &255971985
 PrefabInstance:
@@ -45191,6 +45199,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 623a7345ca6d38f4280b86c32ffe7c15,
         type: 3}
+    - target: {fileID: 2962250409214670265, guid: 25a9b51216ac79a4d8058aa58c2d6889,
+        type: 3}
+      propertyPath: fantasmas
+      value: 
+      objectReference: {fileID: 1184062806}
+    - target: {fileID: 5114420551737060719, guid: 25a9b51216ac79a4d8058aa58c2d6889,
+        type: 3}
+      propertyPath: fantasmas
+      value: 
+      objectReference: {fileID: 1184062806}
     - target: {fileID: 7111323992326090145, guid: 25a9b51216ac79a4d8058aa58c2d6889,
         type: 3}
       propertyPath: m_Sprite

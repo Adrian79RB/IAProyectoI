@@ -31,6 +31,7 @@ public class Monedas : MonoBehaviour
             this.gameObject.SetActive(false);
 
             activarSalida.contadorMonedas++;
+            activarSalida.textChange = true;
 
             LanzarAvisoMonedas();
         }
