@@ -112,4 +112,17 @@ public static class PathfindingClass
             }
         }
     }
+
+    //Path following
+    public static Vector3 getNormalPoint(Vector3 starPoint, Vector3 endPoint, Vector3 vehiclePoint)
+    {
+        Vector3 ab = endPoint - starPoint;
+        Vector3 av = vehiclePoint - starPoint;
+
+        ab = ab.normalized;
+        float distanceOverPath = Vector3.Dot(ab, av);
+        Vector3 vectorToNormalPoint = ab * distanceOverPath;
+
+        return starPoint + vectorToNormalPoint;
+    } 
 }

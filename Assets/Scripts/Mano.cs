@@ -21,7 +21,7 @@ public class Mano : MonoBehaviour
         if(Input.anyKey){
             temporizador = 5;
         }
-        this.transform.position = jugador.position + new Vector3(0,2,0);
+        this.transform.position = jugador.position + new Vector3(0,4,0);
         if(temporizador <0){
             animator.SetTrigger("Aplastar");
         }
