@@ -5,13 +5,14 @@ using UnityEngine;
 public class Mano : MonoBehaviour
 {
     public Transform jugador;
+    public PlayerMovement ef;
 
     public Animator animator;
     public float temporizador = 5;
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -24,6 +25,10 @@ public class Mano : MonoBehaviour
         this.transform.position = jugador.position + new Vector3(0,4,0);
         if(temporizador <0){
             animator.SetTrigger("Aplastar");
+        }
+        if (temporizador < -1.5f)
+        {
+            this.GetComponent<BoxCollider>().enabled = true;
         }
     }
 }
