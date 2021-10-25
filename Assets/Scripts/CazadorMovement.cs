@@ -8,13 +8,12 @@ public class CazadorMovement : MonoBehaviour
     public Transform player;
     public Transform homePoint;
     public Transform nearestNode;
-    public int cazadorId;
 
     public Animator animator;
 
     float velocidadCaza = 3.5f;
     float velocidadRotacion = 0.1f;
-    float distanciaWaypoint = 0.5f;
+    float distanciaWaypoint = 2f;
     Vector3 velocidad;
 
     [SerializeField]int estado; //Alerted: Jugador coge monedas; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca al jugador; GoingPatrol: Persigue al jugador
@@ -59,25 +58,21 @@ public class CazadorMovement : MonoBehaviour
             nearestNode = PathfindingClass.encontrarNodoCercano(transform);
 
             PathfindingClass.obtenerCamino(transform, homePoint.GetComponent<Nodo>(), nearestNode.GetComponent<Nodo>(), ref pathWaypoints);
-            cambiarEstadoCazador(EstadoNPC.GoingHome);
             objetivoActual = nearestNode;
             animator.SetBool("estaCaminando", true);
+            cambiarEstadoCazador(EstadoNPC.GoingHome);
         }
         else if (estado == EstadoNPC.SearchingPatrol || estado == EstadoNPC.GoingPatrol)
         {
             Transform nodoCazador = PathfindingClass.encontrarNodoCercano(transform);
             Transform objetivo = PathfindingClass.encontrarNodoCercano(player);
             Nodo nodoObjetivo = objetivo.GetComponent<Nodo>();
-             animator.SetBool("estaCaminando", false);
+
             if (nodoObjetivo != null)
             {
-                if (cazadorId == 1 && nodoObjetivo.arcs.Count > cazadorId)
-                    objetivo = nodoObjetivo.arcs[cazadorId].transform;
-                else if (cazadorId == 2 && nodoObjetivo.arcs.Count > cazadorId)
-                    objetivo = nodoObjetivo.arcs[cazadorId].transform;
-
                 if (estado == EstadoNPC.SearchingPatrol)
                 {
+                    animator.SetBool("estaCaminando", true);
                     nearestNode = objetivo;
                     PathfindingClass.obtenerCamino(transform, nearestNode.GetComponent<Nodo>(), nodoCazador.GetComponent<Nodo>(), ref pathWaypoints);
                     cambiarEstadoCazador(EstadoNPC.GoingPatrol);
@@ -87,12 +82,15 @@ public class CazadorMovement : MonoBehaviour
                 {
                     nearestNode = objetivo;
                     PathfindingClass.obtenerCamino(transform, nearestNode.GetComponent<Nodo>(), nodoCazador.GetComponent<Nodo>(), ref pathWaypoints);
-                    cambiarEstadoCazador(EstadoNPC.GoingPatrol);
                 }
             }
         }
         else if (estado == EstadoNPC.GoingHome){
             LanzarAvisoFantasma();
+        }
+        else if(estado == EstadoNPC.Waiting)
+        {
+            animator.SetBool("estaCaminando", false);
         }
     }
 
@@ -175,9 +173,6 @@ public class CazadorMovement : MonoBehaviour
     //--------------------------------------
     //Comunicaci�n entre NPCs
     //--------------------------------------
-
-
-
     void LanzarAvisoFantasma()
     {
         Collider[] npcs = Physics.OverlapSphere(transform.position, cazadorCallRadious);

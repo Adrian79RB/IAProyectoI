@@ -20,7 +20,7 @@ public class MovimientoFantasmas : MonoBehaviour
     float velocidadRotacion = 0.15f;
     
     //Valores varios
-    float distanciaWaypoint = 1.5f;
+    float distanciaWaypoint = 2f;
     float ghostCallRadious = 25f;
     float cazadorCallRadious = 3.5f;
     

@@ -4,17 +4,16 @@ using UnityEngine;
 
 public class Monedas : MonoBehaviour
 {
-    // Start is called before the first frame update
     [SerializeField]
     private ActivarSalida activarSalida;
-    private GameObject cazadorPadre;
     private GameObject fantasmaPadre;
+    private GameObject cazador;
 
     void Start()
     {
         activarSalida = FindObjectOfType<ActivarSalida>();
-        cazadorPadre = GameObject.Find("Cazadores");
         fantasmaPadre = GameObject.Find("Fantasmas");
+        cazador = GameObject.Find("cazadorIA");
     }
 
 
@@ -38,17 +37,16 @@ public class Monedas : MonoBehaviour
     }
 
     void LanzarAvisoMonedas(){
-        if (cazadorPadre.transform.GetChild(0).GetComponent<CazadorMovement>().consultaEstadoCazador() == EstadoNPC.GoingPatrol)
+        if (cazador.GetComponent<CazadorMovement>().consultaEstadoCazador() == EstadoNPC.GoingPatrol)
         {
-            for (int i = 0; i < cazadorPadre.transform.childCount; i++)
-            {
-                cazadorPadre.transform.GetChild(i).GetComponent<CazadorMovement>().AvisoDeMonedas();
-            }
+            cazador.GetComponent<CazadorMovement>().AvisoDeMonedas();
         }
 
         for (int i = 0; i < fantasmaPadre.transform.childCount; i++)
         {
-            fantasmaPadre.transform.GetChild(i).GetComponent<MovimientoFantasmas>().AvisoDeMonedas();
+            MovimientoFantasmas fantasma = fantasmaPadre.transform.GetChild(i).GetComponent<MovimientoFantasmas>();
+            if (fantasma.consultaEstadoFantasma() != EstadoNPC.Patrolling)
+                fantasma.AvisoDeMonedas();
         }
     }
 }
