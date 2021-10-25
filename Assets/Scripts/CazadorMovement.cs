@@ -10,9 +10,10 @@ public class CazadorMovement : MonoBehaviour
     public Transform nearestNode;
     public int cazadorId;
 
-    float velocidadCaza = 5.0f;
+    float velocidadCaza = 3.5f;
     float velocidadRotacion = 0.1f;
     float distanciaWaypoint = 0.5f;
+    Vector3 velocidad;
 
     [SerializeField]int estado; //Alerted: Jugador coge monedas; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca al jugador; GoingPatrol: Persigue al jugador
 
@@ -22,6 +23,7 @@ public class CazadorMovement : MonoBehaviour
 
     void Start()
     {
+        velocidad = transform.forward;
         WaypointFather = GameObject.Find("PadreWaypoints").transform;
         objetivoActual = transform;
         pathWaypoints = new int[WaypointFather.childCount];
@@ -30,12 +32,13 @@ public class CazadorMovement : MonoBehaviour
 
     private void Update()
     {
-        Movimiento();
+        //Movimiento();
+        Seek(objetivoActual.position);
         ControlDeEstados();
         ComprobarWaypoints();
     }
 
-    void Movimiento()
+    /*void Movimiento()
     {
         if(objetivoActual != transform)
         {
@@ -44,7 +47,7 @@ public class CazadorMovement : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, rotation, velocidadRotacion);
             transform.position += direction * velocidadCaza * Time.deltaTime;
         }
-    }
+    }*/
 
     private void ControlDeEstados()
     {
@@ -120,6 +123,35 @@ public class CazadorMovement : MonoBehaviour
                 objetivoActual = transform;
             }
         }
+    }
+
+    // ---------------------
+    //Steering Behaviour
+    //----------------------
+    void Seek(Vector3 target)
+    {
+        if (target != transform.position)
+        {
+
+            Vector3 distanciaObjetivo = target - transform.position;
+            Vector3 velocidadDeseada = distanciaObjetivo.normalized * velocidadCaza;
+            Vector3 steer = velocidadDeseada - velocidad;
+
+            velocidad += steer * Time.deltaTime;
+
+            float factorFrenado = Mathf.Clamp01(distanciaObjetivo.magnitude / distanciaWaypoint);
+            velocidad *= factorFrenado;
+
+            transform.position += velocidad * Time.deltaTime;
+
+            npcRotation(distanciaObjetivo.normalized);
+        }
+    }
+
+    void npcRotation(Vector3 distanciaObjetivo)
+    {
+        Quaternion rotacion = Quaternion.LookRotation(distanciaObjetivo, transform.up);
+        transform.rotation = Quaternion.Lerp(this.transform.rotation, rotacion, velocidadRotacion);
     }
 
     void cambiarEstadoCazador(int nuevoEstado)

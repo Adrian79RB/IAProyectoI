@@ -13,36 +13,39 @@ public class MovimientoFantasmas : MonoBehaviour
 
     //Velocidades de moviemiento
     float velocidadPatrol = 2f;
-    float velocidadMovimiento = 5f;
+    float velocidadMovimiento = 3.5f;
     float velocidadActual = 0.0f;
     
     //Velocidad de rotacioon
     float velocidadRotacion = 0.15f;
     
     //Valores varios
-    float distanciaWaypoint = 0.5f;
-    float sphereRadious = 1f;
+    float distanciaWaypoint = 1.5f;
     float ghostCallRadious = 25f;
     [SerializeField]int estado; //Patrolling: Haciendo su patrulla; Alerted: Jugador es detectado; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca lugar patrulla; GoingPatrol: Va hasta la zona patrulla
 
     //Steering Behaviour
-    Vector3 initialPoint;
-    Vector3 endPoint;
-    float pathRadious = 10;
+    //Vector3 initialPoint;
+    //Vector3 endPoint;
+    Vector3 velocidad;
+    //float pathRadious = 1.5f;
 
     //Path Finding
     Transform WaypointFather;
     Transform objetivoActual;
-    Rigidbody rgbd;
     int[] pathWaypoints;
     int[] patrolWaypoints;
 
     void Start()
     {
-        rgbd = GetComponent<Rigidbody>();
-        WaypointFather = GameObject.Find("PadreWaypoints").transform;
+        //Path Following
         objetivoActual = patrolStart;
-        initialPoint = objetivoActual.position;
+        //initialPoint = transform.position;
+        //endPoint = patrolStart.position;
+        velocidad = transform.forward;
+
+        //Path Finding
+        WaypointFather = GameObject.Find("PadreWaypoints").transform;
         pathWaypoints = new int[WaypointFather.childCount];
         patrolWaypoints = new int[WaypointFather.childCount];
         estado = EstadoNPC.Patrolling;
@@ -51,28 +54,29 @@ public class MovimientoFantasmas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Movimiento();
-        Follow();
+        //Movimiento();
+        //Follow();
+        Seek(objetivoActual.position);
         ControlDeEstados();
         ComprobarWaypoint();
     }
 
-    void Movimiento(){
+   /*void Movimiento(){
         if(objetivoActual != transform)
         {
             //Vector3 direccion = (objetivo - this.transform.position).normalized;
             Vector3 direccion = (objetivoActual.position - this.transform.position).normalized;
             Quaternion rotacion = Quaternion.LookRotation(direccion, transform.up);
-            rgbd.MoveRotation(Quaternion.Lerp(this.transform.rotation, rotacion, velocidadRotacion));
+            transform.rotation= Quaternion.Lerp(this.transform.rotation, rotacion, velocidadRotacion);
 
             if (estado == EstadoNPC.Patrolling)
                 velocidadActual = velocidadPatrol;
             else
                 velocidadActual = velocidadMovimiento;
 
-            rgbd.MovePosition(this.transform.position + direccion * velocidadActual * Time.deltaTime);
+            transform.position = this.transform.position + direccion * velocidadActual * Time.deltaTime;
         }
-    }
+    }*/
 
     void ControlDeEstados()
     {
@@ -113,7 +117,7 @@ public class MovimientoFantasmas : MonoBehaviour
         float dist = Vector3.Distance(objetivoActual.position, transform.position);
         if (dist < distanciaWaypoint)
         {
-            initialPoint = objetivoActual.position;
+            //initialPoint = objetivoActual.position;
 
             if (estado == EstadoNPC.Patrolling)
             {
@@ -149,7 +153,7 @@ public class MovimientoFantasmas : MonoBehaviour
                 objetivoActual = transform;
             }
 
-            endPoint = objetivoActual.position;
+            //endPoint = objetivoActual.position;
         }
     }
     // ---------------------
@@ -157,30 +161,61 @@ public class MovimientoFantasmas : MonoBehaviour
     //----------------------
     void Seek(Vector3 target)
     {
-        Vector3 deseado = target - transform.position;
-        deseado = deseado.normalized * velocidadActual;
-        Vector3 steer = deseado - rgbd.velocity;
-        rgbd.AddForce(steer, ForceMode.Acceleration);
+        if(target != transform.position)
+        {
+            if (estado == EstadoNPC.Patrolling)
+                velocidadActual = velocidadPatrol;
+            else
+                velocidadActual = velocidadMovimiento;
+
+            Vector3 distanciaObjetivo = target - transform.position;
+            Vector3 velocidadDeseada = distanciaObjetivo.normalized * velocidadActual;
+            Vector3 steer = velocidadDeseada - velocidad;
+
+            velocidad += steer * Time.deltaTime;
+
+            float factorFrenado = Mathf.Clamp01(distanciaObjetivo.magnitude / distanciaWaypoint);
+            velocidad *= factorFrenado;
+
+            transform.position += velocidad * Time.deltaTime;
+
+            npcRotation(distanciaObjetivo.normalized);
+        }
     }
 
-    void Follow()
+    /*void Follow()
     {
-        Vector3 prediccion = rgbd.velocity;
-        prediccion = transform.position + prediccion.normalized * 50;
-        //Vector3 predicPos = transform.position + prediccion;
+        if (estado == EstadoNPC.Patrolling)
+            velocidadActual = velocidadPatrol;
+        else
+            velocidadActual = velocidadMovimiento;
 
-        Vector3 puntoNormal = PathfindingClass.getNormalPoint(initialPoint, endPoint, prediccion);
+        Vector3 prediccion = velocidad.normalized * 5;
+        Vector3 predicPos = transform.position + prediccion;
+
+        Vector3 puntoNormal = PathfindingClass.getNormalPoint(initialPoint, endPoint, predicPos);
+
         Vector3 dir = endPoint - initialPoint;
-        dir = dir.normalized * rgbd.velocity.magnitude;
-        Vector3 target = puntoNormal + dir;
+        Vector3 posFuturaSobreDir = dir.normalized * velocidadActual;
+        Vector3 target = puntoNormal + posFuturaSobreDir;
 
-        float distanceToPath = Vector3.Distance(puntoNormal, prediccion);
+        float distanceToPath = Vector3.Distance(puntoNormal, predicPos);
+
         if (distanceToPath > pathRadious)
         {
             Seek(target);
-            //Movimiento(target);
+        }
+        else
+        {
+            Seek(objetivoActual.position);
         }
 
+    }*/
+
+    void npcRotation(Vector3 distanciaObjetivo)
+    {
+        Quaternion rotacion = Quaternion.LookRotation(distanciaObjetivo, transform.up);
+        transform.rotation = Quaternion.Lerp(this.transform.rotation, rotacion, velocidadRotacion);
     }
 
     //----------------------
