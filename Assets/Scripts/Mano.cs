@@ -9,7 +9,7 @@ public class Mano : MonoBehaviour
     public Animator animator;
     public float temporizador = 5;
 
-    [SerializeField]bool handActive = false;
+    bool handActive = false;
 
     // Update is called once per frame
     void Update()
@@ -36,10 +36,6 @@ public class Mano : MonoBehaviour
         if (handActive && other.tag == "Player")
         {
             cazado.CaughtPlayer();
-        }
-        if (temporizador < -1.5f)
-        {
-            this.GetComponent<BoxCollider>().enabled = true;
         }
     }
 }
