@@ -17,10 +17,9 @@ public class ActivarSalida : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(contadorMonedas >= 2)
+        if(contadorMonedas >= transform.childCount && !Salida.gameObject.activeSelf)
         {
             Salida.gameObject.SetActive(true);
-            Debug.Log("Holaaaaaaaaaaaaa");
         }
     }
 

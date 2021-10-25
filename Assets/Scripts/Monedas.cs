@@ -39,12 +39,9 @@ public class Monedas : MonoBehaviour
     void LanzarAvisoMonedas(){
         if (cazadorPadre.transform.GetChild(0).GetComponent<CazadorMovement>().consultaEstadoCazador() == EstadoNPC.GoingPatrol)
         {
-            Debug.Log("Desactivando Busqueda");
-
             for (int i = 0; i < cazadorPadre.transform.childCount; i++)
             {
                 cazadorPadre.transform.GetChild(i).GetComponent<CazadorMovement>().AvisoDeMonedas();
-                Debug.Log("Monedas: Soy: " + cazadorPadre.transform.GetChild(i).name + "; estado: " + cazadorPadre.transform.GetChild(i).GetComponent<CazadorMovement>().consultaEstadoCazador());
             }
         }
 
