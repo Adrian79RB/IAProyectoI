@@ -10,6 +10,8 @@ public class CazadorMovement : MonoBehaviour
     public Transform nearestNode;
     public int cazadorId;
 
+    public Animator animator;
+
     float velocidadCaza = 3.5f;
     float velocidadRotacion = 0.1f;
     float distanciaWaypoint = 0.5f;
@@ -59,12 +61,14 @@ public class CazadorMovement : MonoBehaviour
             PathfindingClass.obtenerCamino(transform, homePoint.GetComponent<Nodo>(), nearestNode.GetComponent<Nodo>(), ref pathWaypoints);
             cambiarEstadoCazador(EstadoNPC.GoingHome);
             objetivoActual = nearestNode;
+            animator.SetBool("estaCaminando", true);
         }
         else if (estado == EstadoNPC.SearchingPatrol || estado == EstadoNPC.GoingPatrol)
         {
             Transform nodoCazador = PathfindingClass.encontrarNodoCercano(transform);
             Transform objetivo = PathfindingClass.encontrarNodoCercano(player);
             Nodo nodoObjetivo = objetivo.GetComponent<Nodo>();
+             animator.SetBool("estaCaminando", false);
             if (nodoObjetivo != null)
             {
                 if (cazadorId == 1 && nodoObjetivo.arcs.Count > cazadorId)
