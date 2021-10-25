@@ -23,7 +23,7 @@ public class priorityQueue
         NodoPQ nuevo = new NodoPQ();
         nuevo.nodo = nodoNew;
         nuevo.prioridad = prioridad;
-        if(raiz == null){ //Si la cola está vacia
+        if(raiz == null){ //Si la cola estï¿½ vacia
             raiz = nuevo;
             raiz.anterior = null;
             raiz.siguiente = null;
@@ -44,7 +44,7 @@ public class priorityQueue
                         nuevo.siguiente = nodo;
                         return;
                     }
-                    else if(nodo.siguiente == null && nodo.prioridad < nuevo.prioridad) //Si llegamos al último nodo y siguen siendo más pequeños
+                    else if(nodo.siguiente == null && nodo.prioridad < nuevo.prioridad) //Si llegamos al ï¿½ltimo nodo y siguen siendo mï¿½s pequeï¿½os
                     {
                         nodo.siguiente = nuevo;
                         nuevo.anterior = nodo;
@@ -70,6 +70,13 @@ public class priorityQueue
         }
         return null;
     }
+    //Consultar si la cola estÃ¡ vacia
+    public bool Vacia(){
+        if(length == 0){
+            return true;
+        }
+        return false;
+    }
 
     //Cambiar la prioridad de un nodo de la cola
     public void CambiarPrio(Nodo nodoComp, float nuevaPrio){
@@ -89,7 +96,7 @@ public class priorityQueue
 
     }
 
-    //Comprobamos si un nodo está en la cola de prioridad
+    //Comprobamos si un nodo esta en la cola de prioridad
     public bool EncontrarNodo(Nodo nodoBuscado)
     {
         for(NodoPQ nodo = raiz; nodo != null; nodo = nodo.siguiente)
