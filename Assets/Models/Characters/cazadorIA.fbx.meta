@@ -1,14 +1,9 @@
 fileFormatVersion: 2
-guid: ce2c99e5f50fd514ea93bcb2eb514992
+guid: 27eddebf348c82c419f65f9449e7fd4d
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.003
-    second: {fileID: 2100000, guid: 9f3ab27fec316814eaaa14d41aed4677, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -91,7 +86,7 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     globalScale: 1
-    rootMotionBoneName: hand.L
+    rootMotionBoneName: Neck
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
