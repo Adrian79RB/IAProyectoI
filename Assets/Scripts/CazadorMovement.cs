@@ -16,6 +16,7 @@ public class CazadorMovement : MonoBehaviour
     Vector3 velocidad;
 
     [SerializeField]int estado; //Alerted: Jugador coge monedas; GoingHome: Vuelta al inicio; Waiting: Espera en casa; SearchingPatrol: Busca al jugador; GoingPatrol: Persigue al jugador
+    float cazadorCallRadious = 5.0f;
 
     Transform WaypointFather; //Guardamos en cada indice correspondiente a un nodo, el id de su padre con el que forma el camino al objetivo
     Transform objetivoActual;
@@ -175,7 +176,7 @@ public class CazadorMovement : MonoBehaviour
 
     void LanzarAvisoFantasma()
     {
-        Collider[] npcs = Physics.OverlapSphere(transform.position, cazadorCallRadius);
+        Collider[] npcs = Physics.OverlapSphere(transform.position, cazadorCallRadious);
 
         foreach( Collider npc in npcs)
         {
