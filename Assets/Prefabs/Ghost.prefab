@@ -641,8 +641,6 @@ MonoBehaviour:
   homePoint: {fileID: 0}
   nearestNode: {fileID: 0}
   estado: 0
-  pathWaypoints: 
-  patrolWaypoints: 
 --- !u!1 &5863192054190611860
 GameObject:
   m_ObjectHideFlags: 0
@@ -926,6 +924,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6925745739663848697}
     m_Modifications:
+    - target: {fileID: 4387422829284133010, guid: 8a6f7024e2eb90140bdf570ef653bac8,
+        type: 3}
+      propertyPath: m_Height
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4387422829284133010, guid: 8a6f7024e2eb90140bdf570ef653bac8,
+        type: 3}
+      propertyPath: m_Radius
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4387422829284133010, guid: 8a6f7024e2eb90140bdf570ef653bac8,
+        type: 3}
+      propertyPath: m_Center.z
+      value: 2.75
+      objectReference: {fileID: 0}
     - target: {fileID: 4903280789943914309, guid: 8a6f7024e2eb90140bdf570ef653bac8,
         type: 3}
       propertyPath: m_Name
