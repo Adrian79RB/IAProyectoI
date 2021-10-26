@@ -1926,7 +1926,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contadorMonedas: 0
   Salida: {fileID: 1574526626}
-  marcador: {fileID: 253688235}
+  marcador: {fileID: 882142869}
   textChange: 0
 --- !u!4 &24480225
 Transform:
@@ -13383,12 +13383,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7659890574172713875, guid: c013316754088b1449bccb219da41401,
     type: 3}
   m_PrefabInstance: {fileID: 253576880}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &253688235 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2204012484628536852, guid: 25a9b51216ac79a4d8058aa58c2d6889,
-    type: 3}
-  m_PrefabInstance: {fileID: 892868216}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &255971985
 PrefabInstance:
@@ -44219,6 +44213,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 882118799}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &882142869 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8738873400971058615, guid: 25a9b51216ac79a4d8058aa58c2d6889,
+    type: 3}
+  m_PrefabInstance: {fileID: 892868216}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &883602380 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4398672163102086471, guid: 6dccd6ba3874ac14383aa1fc1658e13f,
@@ -74989,7 +74989,7 @@ Camera:
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_projectionMatrixMode: 0
+  m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
@@ -107923,12 +107923,12 @@ PrefabInstance:
         type: 3}
       propertyPath: patrolEnd
       value: 
-      objectReference: {fileID: 26176792}
+      objectReference: {fileID: 966308027}
     - target: {fileID: 6838823582360122002, guid: abeb186619cc7e6419cb81e1e4dfa162,
         type: 3}
       propertyPath: patrolStart
       value: 
-      objectReference: {fileID: 69817833}
+      objectReference: {fileID: 740675734}
     - target: {fileID: 6925745739663848697, guid: abeb186619cc7e6419cb81e1e4dfa162,
         type: 3}
       propertyPath: m_RootOrder
@@ -107937,7 +107937,7 @@ PrefabInstance:
     - target: {fileID: 6925745739663848697, guid: abeb186619cc7e6419cb81e1e4dfa162,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 108.88731
+      value: 121.33
       objectReference: {fileID: 0}
     - target: {fileID: 6925745739663848697, guid: abeb186619cc7e6419cb81e1e4dfa162,
         type: 3}
@@ -107947,7 +107947,7 @@ PrefabInstance:
     - target: {fileID: 6925745739663848697, guid: abeb186619cc7e6419cb81e1e4dfa162,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -28.267796
+      value: -11.42
       objectReference: {fileID: 0}
     - target: {fileID: 6925745739663848697, guid: abeb186619cc7e6419cb81e1e4dfa162,
         type: 3}

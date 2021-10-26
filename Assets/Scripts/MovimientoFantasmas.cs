@@ -99,8 +99,8 @@ public class MovimientoFantasmas : MonoBehaviour
             nearestNode = PathfindingClass.encontrarNodoCercano(transform);
 
             PathfindingClass.obtenerCamino(transform, homePoint.GetComponent<Nodo>(), nearestNode.GetComponent<Nodo>(), ref pathWaypoints);
-            cambiarEstadoFantasma(EstadoNPC.GoingHome);
             objetivoActual = nearestNode;
+            cambiarEstadoFantasma(EstadoNPC.GoingHome);
         }
         else if (estado == EstadoNPC.GoingHome)
         {

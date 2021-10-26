@@ -15,7 +15,7 @@ public class ActivarSalida : MonoBehaviour
     {
         contadorMonedas = 0;
         Salida.gameObject.SetActive(false);
-        marcador.transform.GetChild(0).GetComponent<Text>().text = "Coins:   / " + transform.childCount;
+        marcador.transform.GetChild(1).GetComponent<Text>().text = "Coins:   / " + transform.childCount;
     }
 
     // Update is called once per frame
@@ -24,7 +24,7 @@ public class ActivarSalida : MonoBehaviour
         if (textChange)
         {
             textChange = false;
-            marcador.transform.GetChild(1).GetComponent<Text>().text = contadorMonedas.ToString();
+            marcador.transform.GetChild(0).GetComponent<Text>().text = contadorMonedas.ToString();
         }
 
         if(contadorMonedas >= transform.childCount && !Salida.gameObject.activeSelf)
